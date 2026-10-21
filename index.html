@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark">
+<title>Language and Reading Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+  /* Layout: one question per screen on a calm page; reading puts the passage beside the question on a wide iPad. */
+  :root {
+    --bg: #F3F5FA;
+    --surface: #FFFFFF;
+    --ink: #18213A;
+    --muted: #55607E;
+    --line: #D5DBE9;
+    --accent: #0B7A75;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #DCF1EF;
+    --challenge: #A85A00;
+    --challenge-soft: #FCEBD3;
+    --star: #B07A00;
+    --star-soft: #FFF1C9;
+    --good: #17703F;
+    --good-soft: #DBF1E4;
+    --bad: #B3261E;
+    --bad-soft: #FBE2E0;
+    --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Atkinson Hyperlegible", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111729; --surface: #1A2238; --ink: #EAF0FF; --muted: #A6B2CE; --line: #2D3856;
+      --accent: #4FCFC6; --accent-ink: #052321; --accent-soft: #163A3A;
+      --challenge: #FFB561; --challenge-soft: #3A2910;
+      --star: #FFD166; --star-soft: #3A3014;
+      --good: #6FD99A; --good-soft: #143525; --bad: #FF8F86; --bad-soft: #3D1C1A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111729; --surface: #1A2238; --ink: #EAF0FF; --muted: #A6B2CE; --line: #2D3856;
+    --accent: #4FCFC6; --accent-ink: #052321; --accent-soft: #163A3A;
+    --challenge: #FFB561; --challenge-soft: #3A2910;
+    --star: #FFD166; --star-soft: #3A3014;
+    --good: #6FD99A; --good-soft: #143525; --bad: #FF8F86; --bad-soft: #3D1C1A;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 20px; line-height: 1.55;
+    padding-block: 20px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.01em; }
+  h2 { font-size: 28px; font-weight: 800; }
+  h3 { font-size: 21px; font-weight: 600; }
+  p { margin: 0; }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 16px; }
+
+  /* home */
+  .home-head { display: grid; gap: 10px; margin-bottom: 28px; max-width: 46rem; }
+  .rules { display: grid; gap: 8px; padding: 0; margin: 14px 0 0; list-style: none; }
+  .rules li { display: flex; gap: 12px; align-items: baseline; }
+  .rules b { font-family: var(--font-display); color: var(--accent); min-width: 1.4em; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+  .card { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 26px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .card .meta { display: flex; gap: 10px 18px; flex-wrap: wrap; }
+  .pill { display: inline-block; border-radius: 99px; padding: 2px 12px; font-size: 15px; font-weight: 700; background: var(--accent-soft); color: var(--accent); }
+  .pill.ch { background: var(--challenge-soft); color: var(--challenge); }
+  .pill.star { background: var(--star-soft); color: var(--star); }
+  .btn { border: 0; border-radius: 14px; min-height: 56px; padding: 12px 26px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+  .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .btn.warn { background: var(--bad); color: #fff; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* quiz */
+  .top { display: grid; gap: 10px; margin-bottom: 18px; }
+  .top-line { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .bar { height: 12px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.25s ease; }
+  .stage { display: grid; gap: 18px; align-items: start; }
+  .stage.read { grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .stage.read { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } .passage { position: sticky; top: 12px; max-height: calc(100vh - 40px); overflow: auto; } }
+  .passage, .qbox { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 24px; min-width: 0; }
+  .passage h3 { margin-bottom: 12px; }
+  .passage p + p { margin-top: 14px; }
+  .passage p { font-size: 20px; line-height: 1.65; max-width: 38rem; }
+  .qhead { display: flex; gap: 8px 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .stem { font-size: 22px; font-weight: 700; margin-bottom: 18px; max-width: 40rem; }
+  .stem u { text-decoration-thickness: 2px; }
+  .opts { display: grid; gap: 12px; }
+  .opt { display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%; background: var(--bg); border: 2px solid var(--line); border-radius: 14px; padding: 14px 16px; min-height: 60px; }
+  .opt .k { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; font-weight: 700; font-family: var(--font-display); }
+  .opt .t { padding-top: 3px; min-width: 0; overflow-wrap: anywhere; }
+  .opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .opt[aria-pressed="true"] .k { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .starbtn { display: inline-flex; gap: 8px; align-items: center; border: 2px solid var(--line); background: transparent; border-radius: 99px; padding: 6px 16px; font-weight: 700; min-height: 44px; }
+  .starbtn[aria-pressed="true"] { background: var(--star-soft); border-color: var(--star); color: var(--star); }
+  .nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 22px; align-items: center; }
+  .hint { color: var(--muted); font-size: 16px; }
+
+  /* results */
+  .score { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 14px; margin: 18px 0 26px; }
+  .tile { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .tile b { display: block; font-family: var(--font-display); font-size: 40px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .skills { display: grid; gap: 12px; margin: 14px 0 28px; }
+  .skill { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4.5rem; gap: 12px; align-items: center; }
+  @media (max-width: 640px) { .skill { grid-template-columns: 1fr 4rem; } .skill .bar { grid-column: 1 / -1; order: 3; } }
+  .skill .n { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+  .bar.sk > i.low { background: var(--challenge); }
+  .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 16px; }
+  .tab { border: 2px solid var(--line); background: transparent; border-radius: 99px; padding: 8px 20px; font-weight: 700; min-height: 48px; }
+  .tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .rev { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; margin-bottom: 14px; min-width: 0; }
+  .rev.ok { border-left: 8px solid var(--good); }
+  .rev.no { border-left: 8px solid var(--bad); }
+  .rev .stem { font-size: 19px; margin: 0; }
+  .ans { display: flex; gap: 8px; flex-wrap: wrap; font-size: 18px; }
+  .ans span { padding: 2px 12px; border-radius: 10px; }
+  .ans .you.no { background: var(--bad-soft); color: var(--bad); }
+  .ans .you.ok, .ans .key { background: var(--good-soft); color: var(--good); }
+  .why { font-size: 18px; color: var(--muted); }
+  textarea.copybox { width: 100%; min-height: 220px; font: 16px/1.4 ui-monospace, Menlo, monospace; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-radius: 12px; padding: 12px; }
+  @media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+</style><style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body>
+
+
+<div class="wrap" id="app" aria-live="polite"></div>
+
+<script id="bank">
+/* ---------- QUESTION BANK ----------
+   lvl "L" = Grade 4 level, "H" = challenge (Grade 5-6). a = index of the correct option (0-3). */
+const LANG = [
+ {id:"L1", lvl:"L", skill:"I or me", q:`Choose the sentence that fills the blank correctly.<br>Maya and ______ walked to the library.`, o:["me","I","myself","mine"], a:1, why:`Take Maya out. “I walked to the library” sounds right, so “Maya and I” is right.`},
+ {id:"L2", lvl:"L", skill:"I or me", q:`The teacher gave the new books to Sam and ______.`, o:["I","myself","me","mine"], a:2, why:`Take Sam out. “The teacher gave the books to me” sounds right. After words like to, for and with, use “me.”`},
+ {id:"L3", lvl:"L", skill:"Look-alike words", q:`The twins left ______ lunches on the bus.`, o:["their","there","they’re","theirs"], a:0, why:`“Their” shows that the lunches belong to the twins. “There” is a place. “They’re” means “they are.”`},
+ {id:"L4", lvl:"L", skill:"Look-alike words", q:`The puppy wagged ______ tail because ______ happy.`, o:["its / its","it’s / its","it’s / it’s","its / it’s"], a:3, why:`“Its” with no apostrophe shows ownership (its tail). “It’s” always means “it is” (it is happy).`},
+ {id:"L5", lvl:"L", skill:"Look-alike words", q:`Please put the box ______ on the table, next to ______ backpack.`, o:["here / her","her / here","here / here","her / her"], a:0, why:`“Here” is a place. “Her” shows who owns the backpack.`},
+ {id:"L6", lvl:"L", skill:"Apostrophes for owners", q:`The ______ coats hung by the door. (The coats belong to several kids.)`, o:["childrens’","children’s","childrens","childs’"], a:1, why:`“Children” is already plural and does not end in s, so add apostrophe + s: children’s.`},
+ {id:"L7", lvl:"L", skill:"Quotation marks and end marks", q:`Which sentence is punctuated correctly?`, o:[`“Can we go now” asked Leo?`,`“Can we go now?”, asked Leo.`,`“Can we go now?” asked Leo.`,`“Can we go now.”? asked Leo.`], a:2, why:`The question mark goes inside the quotation marks, and no comma is needed after it.`},
+ {id:"L8", lvl:"L", skill:"Quotation marks and end marks", q:`Which sentence is <strong>NOT</strong> punctuated correctly?`, o:[`Mom said, “Dinner is ready.”`,`“I’m hungry,” said Ben.`,`“Please sit down,” said Ava.`,`“Wash your hands, said Dad.”`], a:3, why:`Dad’s words end after “hands.” The comma belongs inside the closing quotation marks: “Wash your hands,” said Dad.`},
+ {id:"L9", lvl:"L", skill:"Verbs", q:`My brother and my cousin ______ at the park.`, o:["is","am","are","be"], a:2, why:`Two people (a brother and a cousin) need the plural verb “are.”`},
+ {id:"L10", lvl:"L", skill:"Verbs", q:`Last summer our family ______ to the mountains and ______ a tent.`, o:["travel / pitch","travels / pitches","traveling / pitching","traveled / pitched"], a:3, why:`“Last summer” means it already happened, so both verbs need the past tense.`},
+ {id:"L11", lvl:"L", skill:"Complete sentences", q:`Which one is a correct sentence, not a run-on?`, o:[`The rain stopped we went outside.`,`The rain stopped, so we went outside.`,`The rain stopped, we went outside.`,`The rain stopped and, we went outside.`], a:1, why:`Two full sentences stuck together need a comma <em>and</em> a joining word like “so.”`},
+ {id:"L12", lvl:"L", skill:"Complete sentences", q:`Which group of words is a complete sentence?`, o:[`Running down the hill.`,`Because the bell rang.`,`Dana caught the ball.`,`The tall boy with the red hat.`], a:2, why:`A complete sentence tells who did something and what they did. “Dana caught the ball” does both.`},
+ {id:"L13", lvl:"L", skill:"Spelling", q:`Which word is spelled correctly?<br>The hikers were ______ after the long climb.`, o:["tired","tiered","tird","tyred"], a:0, why:`Tired: t-i-r-e-d. The silent e comes after the r. (“Tiered” is a real word, but it means “in layers.”)`},
+ {id:"L14", lvl:"L", skill:"Spelling", q:`Which word is spelled correctly?<br>She was ______ her bike when she fell.`, o:["ridding","riding","rideing","ridging"], a:1, why:`Drop the silent e before adding -ing: ride becomes riding. “Ridding” would have a short i sound.`},
+ {id:"L15", lvl:"L", skill:"Spelling", q:`Which word is spelled correctly?<br>They crossed the street ______.`, o:["safely","safly","saifly","safley"], a:0, why:`Keep the silent e from “safe” and add -ly: safe + ly = safely.`},
+ {id:"L16", lvl:"L", skill:"Transitions", q:`Choose the best word for the blank.<br>I wanted to play outside. ______, it was raining.`, o:["Therefore,","Also,","For example,","However,"], a:3, why:`The second sentence is a surprise or a problem. “However” shows that.`},
+
+ {id:"H1", lvl:"H", skill:"Look-alike words", q:`The weather will ______ our plans, but the ______ should be small.`, o:["effect / affect","affect / effect","affect / affect","effect / effect"], a:1, why:`“Affect” is usually the verb (to change something). “Effect” is usually the noun (the result).`},
+ {id:"H2", lvl:"H", skill:"Apostrophes for owners", q:`Which sentence uses apostrophes correctly?`, o:[`The two girl’s lockers were next to the teachers lounge.`,`The two girls lockers were next to the teacher’s’ lounge.`,`The two girls’ lockers were next to the teachers’ lounge.`,`The two girls’s lockers were next to the teachers’s lounge.`], a:2, why:`Both words are plural and end in s, so the apostrophe goes after the s: girls’ and teachers’.`},
+ {id:"H3", lvl:"H", skill:"Quotation marks and end marks", q:`Which sentence is punctuated correctly?`, o:[`Did Lila say, “I’m ready?”`,`Did Lila say, “I’m ready.”?`,`Did Lila say “I’m ready?”.`,`Did Lila say, “I’m ready”?`], a:3, why:`Lila’s words are a statement, but the whole sentence is a question. So the question mark goes <em>outside</em> the quotation marks.`},
+ {id:"H4", lvl:"H", skill:"I or me", q:`Between you and ______, the movie was too long.`, o:["me","I","myself","mine"], a:0, why:`“Between” is a word that goes before an object. “Between you and me” is correct.`},
+ {id:"H5", lvl:"H", skill:"Verbs", q:`Neither of the boys ______ finished yet.`, o:["have","are","has","were"], a:2, why:`“Neither” means “not one of them,” so it takes the singular verb “has.”`},
+ {id:"H6", lvl:"H", skill:"Commas", q:`Which sentence uses commas correctly?`, o:[`After the game we went, out for pizza and ice cream.`,`After the game, we went out for pizza and ice cream.`,`After, the game we went out for pizza and ice cream.`,`After the game we went out for pizza, and ice cream.`], a:1, why:`Put a comma after an opening phrase like “After the game.” Do not put one in the middle of a list of two.`},
+ {id:"H7", lvl:"H", skill:"Combining sentences", q:`Which sentence best combines these three?<br><em>The museum opened at nine. It was crowded by ten. Many school groups visited.</em>`, o:[`The museum opened at nine, it was crowded by ten, many school groups visited.`,`The museum opened at nine and crowded by ten many school groups visited.`,`The museum opened at nine, crowded by ten, because of many school groups visited.`,`The museum opened at nine, and by ten it was crowded with school groups.`], a:3, why:`It joins the ideas smoothly, keeps the meaning, and has no run-on.`},
+ {id:"H8", lvl:"H", skill:"Writing: organization", q:`Choose the best opening for the sentence.<br>Recycling saves energy. ______ making a can from recycled metal uses far less energy than making a new one.`, o:["For example,","Meanwhile,","In conclusion,","Suddenly,"], a:0, why:`The second sentence gives an example of the first, so “For example” fits.`},
+ {id:"H9", lvl:"H", skill:"Writing: organization", q:`Which sentence is the best topic sentence to start this paragraph?<br>______ Their large eyes gather dim light. Their soft feathers let them fly without a sound. Their ears can pinpoint tiny noises on the ground.`, o:[`Owls live in many places around the world.`,`I saw an owl once at the zoo.`,`Owls are well suited to hunting in the dark.`,`Some birds sleep during the night.`], a:2, why:`All three sentences give reasons that owls hunt well in the dark. The topic sentence says that main idea.`},
+ {id:"H10", lvl:"H", skill:"Word meaning and figurative language", q:`Which sentence has a <strong>metaphor</strong> (it says one thing <em>is</em> another, without “like” or “as”)?`, o:[`The test was as easy as pie.`,`Her words were a warm blanket on a cold day.`,`The wind howled through the trees.`,`He ran like a cheetah.`], a:1, why:`“Her words were a warm blanket” says one thing <em>is</em> another. A and D use “as” and “like” (those are similes). C gives the wind a voice.`},
+ {id:"H11", lvl:"H", skill:"Word meaning and figurative language", q:`Mia gave a <em>thin excuse</em> for being late. What does “thin excuse” mean?`, o:[`a short excuse`,`a very polite excuse`,`an excuse said quietly`,`an excuse that is hard to believe`], a:3, why:`When we say an excuse is “thin,” we mean there is not enough to it. It does not hold up.`},
+ {id:"H12", lvl:"H", skill:"Word meaning and figurative language", q:`After the announcement, a <em>heavy silence</em> fell over the room. The silence felt…`, o:[`tense and uncomfortable`,`very long`,`loud`,`calm and cheerful`], a:0, why:`“Heavy” does not talk about weight here. It means the quiet felt serious and hard to sit in.`},
+ {id:"H13", lvl:"H", skill:"Word choice", q:`Choose the most exact word.<br>The tired hikers ______ up the steep trail.`, o:["went","moved","trudged","got"], a:2, why:`“Trudged” means walking slowly with heavy steps. It shows tired and steep better than “went.”`},
+ {id:"H14", lvl:"H", skill:"Spelling", q:`Which word is spelled correctly?`, o:["definately","definitly","definetly","definitely"], a:3, why:`Definitely: it has the word “finite” in the middle. d-e-f-i-n-i-t-e-l-y.`}
+];
+
+const PASSAGES = [
+ {id:"P1", lvl:"L", title:"The Blue Kite", text:[
+  `Nora’s kite had a long blue tail and a bright yellow star in the middle. She and her brother Eli had spent three Saturdays building it. Today, at last, the wind was strong enough to lift it.`,
+  `The kite rose over the field, wobbling at first and then steadying like a bird finding its balance. Nora laughed and let out more string. Higher it went, until it was no bigger than a postage stamp.`,
+  `Then a sharp gust slammed across the field. The kite dipped, spun, and plunged into the old oak tree at the edge of the meadow. Nora heard a small rip. Her stomach dropped.`,
+  `Eli was already running. “Don’t climb it,” Nora called, but he only grinned and pointed. A branch hung low enough to reach. Standing on his toes, he unhooked the kite and carried it back, the tail trailing in the grass. One corner was torn.`,
+  `“We can fix that,” Eli said. Nora stared at the tear and then, slowly, she began to smile. “Tomorrow,” she said. “And this time, we’ll add a stronger string.”`]},
+ {id:"P2", lvl:"L", title:"How Bees Make Honey", text:[
+  `Honey is more than a sweet snack. It is food that honeybees make to survive the winter, when flowers are not blooming.`,
+  `The process starts when a worker bee visits a flower and sips nectar, a sugary liquid. She stores the nectar in a special part of her body called the honey stomach. Back at the hive, she passes the nectar to another bee, who chews it for a while. This mixes the nectar with substances from the bee’s body that help change it into honey.`,
+  `The new honey is still watery. To thicken it, bees spread it into the cells of the honeycomb and fan their wings over it. The moving air makes extra water evaporate. When the honey is thick enough, the bees seal each cell with a thin cap of wax so it stays fresh.`,
+  `A single bee makes only about one-twelfth of a teaspoon of honey in her whole life. That is why a hive needs thousands of bees working together.`]},
+ {id:"P3", lvl:"H", title:"The Back Door", text:[
+  `Marisol had practiced the speech forty-one times. She had delivered it to the bathroom mirror, to the dog, and once, in a whisper, to the ceiling above her bed. Every word was memorized. Yet when Mr. Okafor called her name, the words slipped away like fish through cupped fingers.`,
+  `She walked to the front of the room. Twenty-four faces turned toward her, and the silence was so heavy that she could hear the clock ticking above the door. Her note cards trembled in her hand.`,
+  `“Um,” she began. Somebody coughed. Somebody else shifted in a squeaky chair.`,
+  `Then Marisol noticed her best friend, Tam, in the second row. Tam did not smile or wave. She simply nodded, slowly, the way you nod at someone who is about to cross a stream on stepping-stones: <em>you can do this.</em>`,
+  `Marisol took a breath. “The most important invention in my house,” she said, “is the back door.” A few students laughed, surprised. Encouraged, she kept going. She told them how the back door had let in muddy dogs and slammed shut on little brothers’ fingers, and how, every evening, it let in the smell of her grandmother’s cooking. By the time she reached the last note card, she had stopped looking at it.`,
+  `When she sat down, her knees were still shaky, but her face was warm in a way that felt almost like sunshine.`]},
+ {id:"P4", lvl:"H", title:"The Monarch Journey", text:[
+  `Every autumn, millions of monarch butterflies in the eastern United States and Canada begin a remarkable journey. They fly south, some as far as 3,000 miles, to spend the winter in the mountain forests of central Mexico.`,
+  `This trip is unusual for several reasons. First, no single butterfly usually completes the whole round trip. Most monarchs live only two to six weeks. The generation born in late summer is different: these butterflies can live for as long as eight months, long enough to fly south, rest through the winter, and start north again in spring. They lay eggs along the way, and it is their children and grandchildren who finish the trip.`,
+  `Second, the butterflies have never made the journey before, yet they find the same forests their ancestors used. Scientists think monarchs use the position of the sun as a compass, but they are still working to understand how the butterflies know where to go.`,
+  `Today, monarch numbers are falling. Monarch caterpillars eat only milkweed, and farms and roadside mowing have removed much of the milkweed that once grew wild. Many people now plant milkweed in gardens, hoping to give the butterflies a better chance.`]}
+];
+
+const READ = [
+ {id:"R1", p:"P1", lvl:"L", skill:"Main idea and theme", q:`Which sentence tells the main idea of the story?`, o:[`Nora and Eli’s kite is damaged, and they decide to fix it together.`,`Kites are very hard to build.`,`Eli likes to climb trees.`,`The wind is too strong for kites.`], a:0, why:`The kite rips, and the last lines show the two of them making a plan to repair it.`},
+ {id:"R2", p:"P1", lvl:"L", skill:"Vocabulary in context", q:`Read this sentence: “The kite rose over the field, wobbling at first and then <u>steadying</u>.” What does <em>steadying</em> mean?`, o:[`becoming faster`,`becoming stable`,`becoming smaller`,`becoming brighter`], a:1, why:`It wobbled at first, then stopped wobbling. “Steady” means not shaking.`},
+ {id:"R3", p:"P1", lvl:"L", skill:"Feelings and inference", q:`“Her stomach dropped.” How did Nora feel?`, o:[`hungry`,`sleepy`,`worried and upset`,`excited and proud`], a:2, why:`Her stomach drops right after she hears the rip. That is a worried, upset feeling.`},
+ {id:"R4", p:"P1", lvl:"L", skill:"Finding the proving sentence", q:`Which sentence from the story <strong>best</strong> shows that Eli stayed calm and hopeful after the kite tore?`, o:[`“Eli was already running.”`,`“Nora heard a small rip.”`,`“He only grinned and pointed.”`,`“‘We can fix that,’ Eli said.”`], a:3, why:`The torn kite is the problem. Eli’s answer to it, “We can fix that,” is what shows he is calm and hopeful.`},
+ {id:"R5", p:"P1", lvl:"L", skill:"NOT and EXCEPT questions", q:`Which detail is <strong>NOT</strong> in the story?`, o:[`Eli climbed to the top of the oak tree.`,`The kite has a yellow star.`,`Nora and Eli worked on the kite for three Saturdays.`,`One corner of the kite was torn.`], a:0, why:`Eli stood on his toes and reached a low branch. He never climbed the tree. The other three details are in the story.`},
+
+ {id:"R6", p:"P2", lvl:"L", skill:"Main idea and theme", q:`What is the passage mostly about?`, o:[`Bees are dangerous insects.`,`How bees make honey in several steps, and why it takes many bees.`,`Flowers do not bloom in winter.`,`Wax is the main food of bees.`], a:1, why:`Every paragraph is about the steps for making honey. The last one says why a whole hive is needed.`},
+ {id:"R7", p:"P2", lvl:"L", skill:"Details and sequence", q:`What happens <strong>right after</strong> a worker bee returns to the hive with nectar?`, o:[`She seals the cells with wax.`,`She sips more nectar.`,`She passes the nectar to another bee.`,`She fans her wings over the honey.`], a:2, why:`Paragraph two says: “Back at the hive, she passes the nectar to another bee.” Sealing and fanning come later.`},
+ {id:"R8", p:"P2", lvl:"L", skill:"Cause and effect", q:`Why do bees fan their wings over the honey?`, o:[`To cool the hive`,`To scare away other insects`,`To add wax to the honey`,`To make extra water leave the honey`], a:3, why:`“The moving air makes extra water evaporate.” That thickens the honey.`},
+ {id:"R9", p:"P2", lvl:"L", skill:"NOT and EXCEPT questions", q:`Each of these is a step in making honey <strong>EXCEPT</strong>…`, o:[`gathering wax from flowers`,`sipping nectar from flowers`,`chewing the nectar`,`sealing the cells with wax`], a:0, why:`The passage says nothing about collecting wax from flowers. The other three steps are all in it.`},
+ {id:"R10", p:"P2", lvl:"L", skill:"Finding the proving sentence", q:`Which sentence from the passage <strong>best</strong> supports the idea that making honey takes teamwork?`, o:[`“Honey is more than a sweet snack.”`,`“That is why a hive needs thousands of bees working together.”`,`“The new honey is still watery.”`,`“She stores the nectar in a special part of her body called the honey stomach.”`], a:1, why:`Only this sentence is about bees working <em>together</em>.`},
+
+ {id:"R11", p:"P3", lvl:"H", skill:"Main idea and theme", q:`Which statement tells the <strong>theme</strong> (the big lesson) of the story?`, o:[`Practice is a waste of time.`,`Speeches should be short.`,`A kind sign from a friend can help us find courage.`,`Grandmothers are good cooks.`], a:2, why:`Marisol freezes, sees Tam’s nod, takes a breath, and starts. The nod is what changes things.`},
+ {id:"R12", p:"P3", lvl:"H", skill:"Vocabulary in context", q:`“The words slipped away like fish through cupped fingers.” What does this show?`, o:[`Marisol was hungry for lunch.`,`Marisol wanted to go fishing.`,`Marisol was talking too fast.`,`Marisol could not hold on to the words she had memorized.`], a:3, why:`Fish slip out of your hands. Her memorized words slipped out of her head.`},
+ {id:"R13", p:"P3", lvl:"H", skill:"Vocabulary in context", q:`“A few students laughed, surprised. <u>Encouraged</u>, she kept going.” What does <em>encouraged</em> mean?`, o:[`made to feel more confident`,`made to feel angry`,`made to feel tired`,`made to feel confused`], a:0, why:`The laughs were friendly, and after them she kept going. “En-courage” means to give courage.`},
+ {id:"R14", p:"P3", lvl:"H", skill:"Finding the proving sentence", q:`Which sentence <strong>best</strong> shows that Marisol was nervous at the start of her speech?`, o:[`“A few students laughed, surprised.”`,`“Her note cards trembled in her hand.”`,`“By the time she reached the last note card, she had stopped looking at it.”`,`“Her face was warm in a way that felt almost like sunshine.”`], a:1, why:`Trembling hands show nerves. The other sentences happen after she has started to feel better.`},
+ {id:"R15", p:"P3", lvl:"H", skill:"NOT and EXCEPT questions", q:`Which statement about Marisol is <strong>NOT</strong> supported by the story?`, o:[`She practiced her speech many times.`,`She felt more confident by the end.`,`She forgot to bring her note cards.`,`Her speech was about the back door of her house.`], a:2, why:`She had note cards in her hand. She did not forget them. The other three statements are in the story.`},
+
+ {id:"R16", p:"P4", lvl:"H", skill:"Main idea and theme", q:`Which sentence tells the main idea of the passage?`, o:[`Monarchs are the fastest butterflies in the world.`,`Mexico is warmer than Canada.`,`Milkweed is the only plant that grows on farms.`,`Monarchs make an unusual long trip, and their numbers are falling.`], a:3, why:`The passage explains the trip in the first three paragraphs and the drop in numbers in the last one.`},
+ {id:"R17", p:"P4", lvl:"H", skill:"Details and sequence", q:`According to the passage, why does <strong>no single butterfly</strong> usually finish the whole round trip?`, o:[`They do not live long enough, so their children and grandchildren finish the trip.`,`They get lost along the way.`,`They prefer to stay in Mexico.`,`Farmers move them to other fields.`], a:0, why:`Butterflies lay eggs along the way, and the next generations finish the trip.`},
+ {id:"R18", p:"P4", lvl:"H", skill:"Vocabulary in context", q:`“Monarch butterflies begin a <u>remarkable</u> journey.” What does <em>remarkable</em> mean?`, o:[`ordinary`,`worth noticing because it is unusual`,`dangerous`,`slow`], a:1, why:`The next paragraph says the trip is “unusual” and explains why. That is what “remarkable” means here.`},
+ {id:"R19", p:"P4", lvl:"H", skill:"Cause and effect", q:`Which sentence from the passage tells a <strong>cause</strong> of the falling number of monarchs?`, o:[`“Most monarchs live only two to six weeks.”`,`“Scientists think monarchs use the position of the sun as a compass.”`,`“Monarch caterpillars eat only milkweed, and farms and roadside mowing have removed much of the milkweed that once grew wild.”`,`“Many people now plant milkweed in gardens.”`], a:2, why:`Less milkweed means less food for caterpillars. The last choice is something people do to help, not a cause of the problem.`},
+ {id:"R20", p:"P4", lvl:"H", skill:"Feelings and inference", q:`Which statement would the author <strong>most likely</strong> agree with?`, o:[`Planting milkweed can help monarchs.`,`Monarchs should be kept indoors.`,`Monarchs no longer need to travel.`,`Scientists already know exactly how monarchs find their way.`], a:0, why:`The passage ends with people planting milkweed to give butterflies a better chance. The passage also says scientists are still working to understand how monarchs navigate, so D is wrong.`}
+];
+</script>
+
+<script>
+(() => {
+  "use strict";
+  const KEY = "practice-v1";
+  const $app = document.getElementById("app");
+  const LETTERS = ["A", "B", "C", "D"];
+
+  /* Language: mix the two levels (L, H, L, H ...) so the harder ones are spread out. */
+  function interleave(items) {
+    const L = items.filter(x => x.lvl === "L"), H = items.filter(x => x.lvl === "H"), out = [];
+    while (L.length || H.length) { if (L.length) out.push(L.shift()); if (H.length) out.push(H.shift()); }
+    return out;
+  }
+  const SECTIONS = {
+    lang: { name: "Language Usage", blurb: "Grammar, punctuation, spelling, word meaning and writing.", items: interleave(LANG) },
+    read: { name: "Reading", blurb: "Four short passages, five questions each.", items: READ }
+  };
+  const PASS = Object.fromEntries(PASSAGES.map(p => [p.id, p]));
+
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { /* storage may be blocked */ } };
+  const fresh = () => ({ i: 0, ans: {}, star: {}, secs: 0, done: false });
+  const get = k => (store[k] ||= fresh());
+  const testMode = () => true; /* MAP-style only: no star, no Back, no difficulty labels */
+
+  let view = "home", cur = null, tab = "missed", confirmReset = null, copyText = null;
+
+  setInterval(() => {
+    if (view === "quiz" && cur && !document.hidden) { get(cur).secs++; if (get(cur).secs % 5 === 0) save(); }
+  }, 1000);
+
+  const esc = s => String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+  const mins = s => (s < 60 ? "under a minute" : Math.round(s / 60) + " min");
+
+  function score(k) {
+    const st = get(k), items = SECTIONS[k].items;
+    const r = { right: 0, total: items.length, L: [0, 0], H: [0, 0], skills: {}, starRight: 0, starN: 0, missed: [] };
+    items.forEach((it, n) => {
+      const ok = st.ans[it.id] === it.a;
+      if (ok) r.right++; else r.missed.push(n);
+      r[it.lvl][1]++; if (ok) r[it.lvl][0]++;
+      (r.skills[it.skill] ||= [0, 0])[1]++; if (ok) r.skills[it.skill][0]++;
+      if (st.star[it.id]) { r.starN++; if (ok) r.starRight++; }
+    });
+    return r;
+  }
+
+  /* ---------- views ---------- */
+  function home() {
+    const card = k => {
+      const s = SECTIONS[k], st = get(k), n = Object.keys(st.ans).length, tot = s.items.length;
+      const ch = s.items.filter(x => x.lvl === "H").length;
+      let action;
+      if (st.done) action = `<button class="btn" data-act="results" data-k="${k}">See my results</button><button class="btn ghost" data-act="again" data-k="${k}">${confirmReset === k ? "Tap again to erase and restart" : "Start over"}</button>`;
+      else if (n > 0) action = `<button class="btn" data-act="start" data-k="${k}">Keep going (${n} of ${tot} done)</button><button class="btn ghost" data-act="again" data-k="${k}">${confirmReset === k ? "Tap again to erase and restart" : "Start over"}</button>`;
+      else action = `<button class="btn" data-act="start" data-k="${k}">Start</button>`;
+      return `<section class="card"><h2>${s.name}</h2><p>${s.blurb}</p>
+        <div class="meta"><span class="pill">${tot} questions</span><span class="pill ch">${ch} challenge</span><span class="pill">about 25 min</span></div>
+        <div class="row">${action}</div></section>`;
+    };
+    $app.innerHTML = `
+      <header class="home-head">
+        <h1>Language and Reading Practice</h1>
+        <p class="muted">Grade 4 practice with some harder questions mixed in. Do one part at a time. You can stop and come back.</p>
+        <ul class="rules">
+          <li><b>1</b><span>Answer <strong>every</strong> question, even if you are not sure. The real test does not let you skip.</span></li>
+          ${testMode()
+            ? `<li><b>2</b><span>You cannot go back to an earlier question, just like the real test. Take your time on each one.</span></li>
+               <li><b>3</b><span>Some questions are harder on purpose. Missing some is normal.</span></li>`
+            : `<li><b>2</b><span>If a question feels tricky, tap <strong>★ Not sure</strong> <em>and still pick your best answer.</em></span></li>
+               <li><b>3</b><span>Questions marked <span class="pill ch">Challenge</span> are meant to be harder. Missing some is normal.</span></li>`}
+          <li><b>4</b><span>Read each question twice. Watch for the words <strong>NOT</strong> and <strong>EXCEPT</strong>.</span></li>
+        </ul>
+      </header>
+      <div class="cards">${card("lang")}${card("read")}</div>`;
+  }
+
+  function quiz() {
+    const s = SECTIONS[cur], st = get(cur), it = s.items[st.i], tot = s.items.length;
+    const isRead = cur === "read", p = isRead ? PASS[it.p] : null;
+    const chosen = st.ans[it.id], starred = !!st.star[it.id];
+    const passage = isRead ? `<article class="passage" aria-label="Passage"><div class="qhead"><h3>${p.title}</h3>${p.lvl === "H" && !testMode() ? '<span class="pill ch">Challenge passage</span>' : ""}</div>${p.text.map(t => `<p>${t}</p>`).join("")}</article>` : "";
+    const lastQ = st.i === tot - 1;
+    $app.innerHTML = `
+      <div class="top">
+        <div class="top-line"><strong>${s.name}</strong><span class="muted">Question ${st.i + 1} of ${tot}</span></div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${st.i + 1}"><i style="width:${((st.i + 1) / tot) * 100}%"></i></div>
+      </div>
+      <div class="stage ${isRead ? "read" : ""}">
+        ${passage}
+        <section class="qbox">
+          ${testMode() ? "" : `<div class="qhead">${it.lvl === "H" ? '<span class="pill ch">Challenge</span>' : ""}</div>`}
+          <p class="stem">${it.q}</p>
+          <div class="opts" role="group" aria-label="Answers">
+            ${it.o.map((t, n) => `<button class="opt" data-act="pick" data-n="${n}" aria-pressed="${chosen === n}"><span class="k">${LETTERS[n]}</span><span class="t">${t}</span></button>`).join("")}
+          </div>
+          <div class="nav">
+            <div class="row">
+              ${testMode() ? "" : `<button class="btn ghost" data-act="back" ${st.i === 0 ? "disabled" : ""}>Back</button>
+              <button class="starbtn" data-act="star" aria-pressed="${starred}">★ Not sure</button>`}
+            </div>
+            <div class="row">
+              <span class="hint">${chosen === undefined ? "Pick an answer to go on." : ""}</span>
+              <button class="btn" data-act="${lastQ ? "finish" : "next"}" ${chosen === undefined ? "disabled" : ""}>${lastQ ? "Finish" : "Next"}</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <p class="hint" style="margin-top:18px"><button class="btn ghost" data-act="home" style="min-height:44px;padding:6px 18px">Save and go back</button></p>`;
+    window.scrollTo(0, 0);
+  }
+
+  function results() {
+    const s = SECTIONS[cur], st = get(cur), r = score(cur);
+    const sk = Object.entries(r.skills).sort((a, b) => pct(a[1][0], a[1][1]) - pct(b[1][0], b[1][1]));
+    const rev = (tab === "missed" ? r.missed : s.items.map((_, n) => n));
+    const letter = n => (n === undefined ? "no answer" : LETTERS[n]);
+    $app.innerHTML = `
+      <p><button class="btn ghost" data-act="home" style="min-height:44px;padding:6px 18px">Back to start</button></p>
+      <h1 style="margin-top:18px">${s.name}: your results</h1>
+      <div class="score">
+        <div class="tile"><span class="muted small">All questions</span><b>${r.right} / ${r.total}</b><span class="muted small">${pct(r.right, r.total)}%</span></div>
+        <div class="tile"><span class="muted small">Grade 4 level</span><b>${r.L[0]} / ${r.L[1]}</b><span class="muted small">${pct(r.L[0], r.L[1])}%</span></div>
+        <div class="tile"><span class="muted small">Challenge questions</span><b>${r.H[0]} / ${r.H[1]}</b><span class="muted small">${pct(r.H[0], r.H[1])}%</span></div>
+        ${r.starN ? `<div class="tile"><span class="muted small">Marked ★ Not sure</span><b>${r.starN}</b><span class="muted small">${r.starRight} of them were right</span></div>` : ""}
+      </div>
+      <p class="muted">Time: ${mins(st.secs)}. Challenge questions are meant to be harder, so a lower score there is expected.</p>
+      <h2 style="margin-top:26px">By skill</h2>
+      <div class="skills">${sk.map(([n, v]) => `<div class="skill"><span>${esc(n)}</span><div class="bar sk"><i class="${pct(v[0], v[1]) < 60 ? "low" : ""}" style="width:${pct(v[0], v[1])}%"></i></div><span class="n">${v[0]} / ${v[1]}</span></div>`).join("")}</div>
+      <div class="row"><button class="btn" data-act="copy">Copy results for Dad</button></div>
+      ${copyText ? `<p class="hint" style="margin:12px 0 6px">Select all of this text and copy it:</p><textarea class="copybox" id="copybox" readonly>${esc(copyText)}</textarea>` : ""}
+      <h2 style="margin-top:30px">Look at the answers</h2>
+      <div class="tabs"><button class="tab" data-act="tab" data-t="missed" aria-pressed="${tab === "missed"}">Missed (${r.missed.length})</button><button class="tab" data-act="tab" data-t="all" aria-pressed="${tab === "all"}">All ${r.total}</button></div>
+      ${rev.length === 0 ? `<p>You got every question right.</p>` : rev.map(n => {
+        const it = s.items[n], mine = st.ans[it.id], ok = mine === it.a, p = cur === "read" ? PASS[it.p] : null;
+        return `<article class="rev ${ok ? "ok" : "no"}">
+          <div class="qhead" style="margin:0"><strong>${n + 1}.</strong><span class="pill">${esc(it.skill)}</span>${it.lvl === "H" ? '<span class="pill ch">Challenge</span>' : ""}${st.star[it.id] ? '<span class="pill star">★ Not sure</span>' : ""}${p ? `<span class="muted small">${esc(p.title)}</span>` : ""}</div>
+          <p class="stem">${it.q}</p>
+          <div class="ans"><span class="you ${ok ? "ok" : "no"}">You: ${letter(mine)}${mine !== undefined ? ". " + it.o[mine] : ""}</span>${ok ? "" : `<span class="key">Right answer: ${LETTERS[it.a]}. ${it.o[it.a]}</span>`}</div>
+          <p class="why">${it.why}</p></article>`;
+      }).join("")}`;
+    window.scrollTo(0, 0);
+  }
+
+  function summaryText(k) {
+    const s = SECTIONS[k], st = get(k), r = score(k);
+    const lines = [`${s.name} practice, ${new Date().toISOString().slice(0, 10)}`, `Score ${r.right}/${r.total} (${pct(r.right, r.total)}%). Grade 4 level ${r.L[0]}/${r.L[1]}. Challenge ${r.H[0]}/${r.H[1]}. Time ${mins(st.secs)}.`, `Marked Not sure: ${r.starN} (${r.starRight} right).`, "By skill:"];
+    Object.entries(r.skills).forEach(([n, v]) => lines.push(`- ${n}: ${v[0]}/${v[1]}`));
+    lines.push("Answers (question: her answer, key, * = Not sure, ! = missed):");
+    s.items.forEach((it, n) => { const m = st.ans[it.id]; lines.push(`${n + 1} ${it.id}${it.lvl === "H" ? "(C)" : ""}: ${m === undefined ? "-" : LETTERS[m]} / ${LETTERS[it.a]}${st.star[it.id] ? " *" : ""}${m === it.a ? "" : " !"}`); });
+    return lines.join("\n");
+  }
+
+  /* ---------- events ---------- */
+  $app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
+    const act = b.dataset.act, k = b.dataset.k || cur;
+    if (act === "start") { cur = k; view = "quiz"; confirmReset = null; quiz(); return; }
+    if (act === "results") { cur = k; view = "results"; tab = "missed"; copyText = null; results(); return; }
+    if (act === "again") {
+      if (confirmReset === k) { store[k] = fresh(); save(); confirmReset = null; } else { confirmReset = k; }
+      home(); return;
+    }
+    if (act === "home") { save(); view = "home"; copyText = null; confirmReset = null; home(); window.scrollTo(0, 0); return; }
+    if (act === "tab") { tab = b.dataset.t; results(); return; }
+    if (act === "copy") {
+      const t = summaryText(cur);
+      const show = () => { copyText = t; results(); const box = document.getElementById("copybox"); if (box) { box.focus(); box.select(); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => { copyText = t + "\n\n(Copied to the clipboard.)"; results(); }, show); else show();
+      return;
+    }
+    if (view !== "quiz") return;
+    const st = get(cur), it = SECTIONS[cur].items[st.i];
+    if (act === "pick") { st.ans[it.id] = Number(b.dataset.n); save(); quiz(); }
+    else if (act === "star") { st.star[it.id] = !st.star[it.id]; save(); quiz(); }
+    else if (act === "next") { st.i++; save(); quiz(); }
+    else if (act === "back") { st.i = Math.max(0, st.i - 1); save(); quiz(); }
+    else if (act === "finish") { st.done = true; save(); view = "results"; tab = "missed"; copyText = null; results(); }
+  });
+
+  home();
+})();
+</script>
+
+</body></html>
