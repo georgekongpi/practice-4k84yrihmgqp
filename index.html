@@ -227,6 +227,8 @@ const READ = [
 (() => {
   "use strict";
   const KEY = "practice-v1";
+  const NTFY = "https://ntfy.sh/mapprac-h3iomrkh7egfh0xr";
+  let lastSend = "";
   const $app = document.getElementById("app");
   const LETTERS = ["A", "B", "C", "D"];
 
@@ -354,7 +356,7 @@ const READ = [
       <p class="muted">Time: ${mins(st.secs)}. Challenge questions are meant to be harder, so a lower score there is expected.</p>
       <h2 style="margin-top:26px">By skill</h2>
       <div class="skills">${sk.map(([n, v]) => `<div class="skill"><span>${esc(n)}</span><div class="bar sk"><i class="${pct(v[0], v[1]) < 60 ? "low" : ""}" style="width:${pct(v[0], v[1])}%"></i></div><span class="n">${v[0]} / ${v[1]}</span></div>`).join("")}</div>
-      <div class="row"><button class="btn" data-act="mail">Email results to Dad</button><button class="btn ghost" data-act="copy">Copy results</button></div><p class="hint" style="margin-top:10px">Tap Email results to Dad. Your email app opens with the results filled in. Add Dad as the person to send it to, then tap Send. If the email app does not open, tap Copy results and paste it into a message.</p>
+      <div class="row"><button class="btn" data-act="send">Send results to Dad</button><button class="btn ghost" data-act="mail">Email instead</button><button class="btn ghost" data-act="copy">Copy results</button></div><p class="hint" style="margin-top:10px">${st.sentAt ? "Sent to Dad." : (lastSend === "fail" ? "It did not send. Tap Email instead." : "Tap Send results to Dad.")}</p>
       ${copyText ? `<p class="hint" style="margin:12px 0 6px">Select all of this text and copy it:</p><textarea class="copybox" id="copybox" readonly>${esc(copyText)}</textarea>` : ""}
       <h2 style="margin-top:30px">Look at the answers</h2>
       <div class="tabs"><button class="tab" data-act="tab" data-t="missed" aria-pressed="${tab === "missed"}">Missed (${r.missed.length})</button><button class="tab" data-act="tab" data-t="all" aria-pressed="${tab === "all"}">All ${r.total}</button></div>
@@ -378,6 +380,17 @@ const READ = [
     return lines.join("\n");
   }
 
+  async function pushResults(k) {
+    const st = get(k);
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 12000);
+      const r = await fetch(NTFY, { method: "POST", body: summaryText(k), headers: { "Title": "Practice results: " + SECTIONS[k].name, "Tags": "memo" }, signal: ctl.signal });
+      clearTimeout(to);
+      if (!r.ok) throw new Error("status " + r.status);
+      st.sentAt = Date.now(); lastSend = "ok"; save(); return true;
+    } catch (e) { lastSend = "fail"; return false; }
+  }
+
   /* ---------- events ---------- */
   $app.addEventListener("click", e => {
     const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
@@ -390,6 +403,7 @@ const READ = [
     }
     if (act === "home") { save(); view = "home"; copyText = null; confirmReset = null; home(); window.scrollTo(0, 0); return; }
     if (act === "tab") { tab = b.dataset.t; results(); return; }
+    if (act === "send") { pushResults(cur).then(() => { if (view === "results") results(); }); return; }
     if (act === "mail") {
       const a = document.createElement("a");
       a.href = "mailto:?subject=" + encodeURIComponent("Practice results") + "&body=" + encodeURIComponent(summaryText(cur));
@@ -408,7 +422,7 @@ const READ = [
     else if (act === "star") { st.star[it.id] = !st.star[it.id]; save(); quiz(); }
     else if (act === "next") { st.i++; save(); quiz(); }
     else if (act === "back") { st.i = Math.max(0, st.i - 1); save(); quiz(); }
-    else if (act === "finish") { st.done = true; save(); view = "results"; tab = "missed"; copyText = null; results(); }
+    else if (act === "finish") { st.done = true; delete st.sentAt; save(); view = "results"; tab = "missed"; copyText = null; results(); pushResults(cur).then(() => { if (view === "results") results(); }); }
   });
 
   home();
