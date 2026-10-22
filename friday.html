@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark">
+<title>Friday Warm-up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+  /* Layout: one question per screen on a calm page; reading puts the passage beside the question on a wide iPad. */
+  :root {
+    --bg: #F3F5FA;
+    --surface: #FFFFFF;
+    --ink: #18213A;
+    --muted: #55607E;
+    --line: #D5DBE9;
+    --accent: #0B7A75;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #DCF1EF;
+    --challenge: #A85A00;
+    --challenge-soft: #FCEBD3;
+    --star: #B07A00;
+    --star-soft: #FFF1C9;
+    --good: #17703F;
+    --good-soft: #DBF1E4;
+    --bad: #B3261E;
+    --bad-soft: #FBE2E0;
+    --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Atkinson Hyperlegible", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111729; --surface: #1A2238; --ink: #EAF0FF; --muted: #A6B2CE; --line: #2D3856;
+      --accent: #4FCFC6; --accent-ink: #052321; --accent-soft: #163A3A;
+      --challenge: #FFB561; --challenge-soft: #3A2910;
+      --star: #FFD166; --star-soft: #3A3014;
+      --good: #6FD99A; --good-soft: #143525; --bad: #FF8F86; --bad-soft: #3D1C1A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111729; --surface: #1A2238; --ink: #EAF0FF; --muted: #A6B2CE; --line: #2D3856;
+    --accent: #4FCFC6; --accent-ink: #052321; --accent-soft: #163A3A;
+    --challenge: #FFB561; --challenge-soft: #3A2910;
+    --star: #FFD166; --star-soft: #3A3014;
+    --good: #6FD99A; --good-soft: #143525; --bad: #FF8F86; --bad-soft: #3D1C1A;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 20px; line-height: 1.55;
+    padding-block: 20px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.01em; }
+  h2 { font-size: 28px; font-weight: 800; }
+  h3 { font-size: 21px; font-weight: 600; }
+  p { margin: 0; }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 16px; }
+
+  /* home */
+  .home-head { display: grid; gap: 10px; margin-bottom: 28px; max-width: 46rem; }
+  .rules { display: grid; gap: 8px; padding: 0; margin: 14px 0 0; list-style: none; }
+  .rules li { display: flex; gap: 12px; align-items: baseline; }
+  .rules b { font-family: var(--font-display); color: var(--accent); min-width: 1.4em; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+  .card { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 26px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .card .meta { display: flex; gap: 10px 18px; flex-wrap: wrap; }
+  .pill { display: inline-block; border-radius: 99px; padding: 2px 12px; font-size: 15px; font-weight: 700; background: var(--accent-soft); color: var(--accent); }
+  .pill.ch { background: var(--challenge-soft); color: var(--challenge); }
+  .pill.star { background: var(--star-soft); color: var(--star); }
+  .btn { border: 0; border-radius: 14px; min-height: 56px; padding: 12px 26px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+  .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .btn.warn { background: var(--bad); color: #fff; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* quiz */
+  .top { display: grid; gap: 10px; margin-bottom: 18px; }
+  .top-line { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .bar { height: 12px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.25s ease; }
+  .stage { display: grid; gap: 18px; align-items: start; }
+  .stage.read { grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .stage.read { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } .passage { position: sticky; top: 12px; max-height: calc(100vh - 40px); overflow: auto; } }
+  .passage, .qbox { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 24px; min-width: 0; }
+  .passage h3 { margin-bottom: 12px; }
+  .passage p + p { margin-top: 14px; }
+  .passage p { font-size: 20px; line-height: 1.65; max-width: 38rem; }
+  .qhead { display: flex; gap: 8px 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .stem { font-size: 22px; font-weight: 700; margin-bottom: 18px; max-width: 40rem; }
+  .stem u { text-decoration-thickness: 2px; }
+  .opts { display: grid; gap: 12px; }
+  .opt { display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%; background: var(--bg); border: 2px solid var(--line); border-radius: 14px; padding: 14px 16px; min-height: 60px; }
+  .opt .k { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; font-weight: 700; font-family: var(--font-display); }
+  .opt .t { padding-top: 3px; min-width: 0; overflow-wrap: anywhere; }
+  .opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .opt[aria-pressed="true"] .k { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .starbtn { display: inline-flex; gap: 8px; align-items: center; border: 2px solid var(--line); background: transparent; border-radius: 99px; padding: 6px 16px; font-weight: 700; min-height: 44px; }
+  .starbtn[aria-pressed="true"] { background: var(--star-soft); border-color: var(--star); color: var(--star); }
+  .nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 22px; align-items: center; }
+  .hint { color: var(--muted); font-size: 16px; }
+
+  /* results */
+  .score { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 14px; margin: 18px 0 26px; }
+  .tile { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .tile b { display: block; font-family: var(--font-display); font-size: 40px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .skills { display: grid; gap: 12px; margin: 14px 0 28px; }
+  .skill { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4.5rem; gap: 12px; align-items: center; }
+  @media (max-width: 640px) { .skill { grid-template-columns: 1fr 4rem; } .skill .bar { grid-column: 1 / -1; order: 3; } }
+  .skill .n { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+  .bar.sk > i.low { background: var(--challenge); }
+  .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 16px; }
+  .tab { border: 2px solid var(--line); background: transparent; border-radius: 99px; padding: 8px 20px; font-weight: 700; min-height: 48px; }
+  .tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .rev { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; margin-bottom: 14px; min-width: 0; }
+  .rev.ok { border-left: 8px solid var(--good); }
+  .rev.no { border-left: 8px solid var(--bad); }
+  .rev .stem { font-size: 19px; margin: 0; }
+  .ans { display: flex; gap: 8px; flex-wrap: wrap; font-size: 18px; }
+  .ans span { padding: 2px 12px; border-radius: 10px; }
+  .ans .you.no { background: var(--bad-soft); color: var(--bad); }
+  .ans .you.ok, .ans .key { background: var(--good-soft); color: var(--good); }
+  .why { font-size: 18px; color: var(--muted); }
+  textarea.copybox { width: 100%; min-height: 220px; font: 16px/1.4 ui-monospace, Menlo, monospace; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-radius: 12px; padding: 12px; }
+  @media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+</style>
+<style>
+.rule{background:var(--accent-soft);border:2px solid var(--accent);border-radius:18px;padding:22px;display:grid;gap:12px;max-width:44rem}
+.rule p{margin:0}
+.opt.good{border-color:var(--good);background:var(--good-soft)} .opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt[disabled]{cursor:default}
+.fb{margin-top:14px;padding:12px 16px;border-radius:12px;font-size:19px}
+.fb.ok{background:var(--good-soft);color:var(--good)} .fb.no{background:var(--bad-soft);color:var(--bad)}
+.fb .w{color:var(--ink);display:block;margin-top:6px;font-size:18px}
+.done{color:var(--good);font-weight:700}
+</style><style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body>
+<div class="wrap" id="app" aria-live="polite"></div>
+<script>const DATA = {"sessions": [{"title": "Small words: I or me, its or it's", "min": 8, "items": [{"q": "Grandma baked cookies for Leo and ______.", "o": ["I", "me", "myself", "mine"], "a": 1, "why": "Take Leo out: “Grandma baked cookies for me.” So: Leo and <b>me</b>."}, {"q": "Priya and ______ are in the same class.", "o": ["me", "I", "myself", "mine"], "a": 1, "why": "Take Priya out: “I am in the same class.” So: Priya and <b>I</b>."}, {"q": "The coach picked Ben and ______ for the team.", "o": ["me", "I", "myself", "mine"], "a": 0, "why": "Take Ben out: “The coach picked me.” So: Ben and <b>me</b>."}, {"q": "Ana and ______ built a sandcastle.", "o": ["myself", "me", "mine", "I"], "a": 3, "why": "Take Ana out: “I built a sandcastle.” So: Ana and <b>I</b>."}, {"q": "Mom sat between Sofia and ______.", "o": ["I", "myself", "me", "mine"], "a": 2, "why": "After words like between, to and for, use <b>me</b>: between Sofia and me."}, {"q": "Eli and ______ went to the library.", "o": ["me", "myself", "I", "mine"], "a": 2, "why": "Take Eli out: “I went to the library.” So: Eli and <b>I</b>."}, {"q": "The kitten licked ______ paw.", "o": ["it's", "its", "its'", "it is"], "a": 1, "why": "The paw belongs to the kitten, so <b>its</b>, with no apostrophe."}, {"q": "I think ______ going to rain.", "o": ["its", "its'", "it's", "its's"], "a": 2, "why": "Say “it is”: “I think it is going to rain.” That works, so <b>it's</b>."}, {"q": "The tree lost ______ leaves in autumn.", "o": ["it's", "it is", "its'", "its"], "a": 3, "why": "Say “it is”: “The tree lost it is leaves.” That is wrong, so use <b>its</b>."}, {"q": "______ a long way to the lake.", "o": ["Its", "It's", "Its'", "Its is"], "a": 1, "why": "Say “it is”: “It is a long way to the lake.” That works, so <b>It's</b>."}], "rule": ["<b>I or me.</b> Take the other person out and say the sentence alone. “Dad took Mia and ___ to soccer” becomes “Dad took ___”. That is <b>me</b>. Use <b>me</b> after words like to, for, with and between.", "<b>its or it's.</b> Say “it is” in the blank. If it makes sense, write <b>it's</b>. If it does not, write <b>its</b> (it owns something). Never write its'."]}, {"title": "Silent e and quotation marks", "min": 9, "items": [{"q": "After the race, Zoe felt ______.", "o": ["tired", "tird", "tiered", "tyred"], "a": 0, "why": "tire + ed: drop the e before -ed. <b>tired</b>."}, {"q": "The boy was ______ at the new school.", "o": ["lonly", "lonelly", "lonely", "lonley"], "a": 2, "why": "lone + ly: keep the e before -ly. <b>lonely</b>."}, {"q": "We are ______ to see snow.", "o": ["hopeing", "hoping", "hopping", "hopng"], "a": 1, "why": "hope + ing: drop the e before -ing. <b>hoping</b>. (Hopping is hop + ing, a different word.)"}, {"q": "The old sneakers were ______ in the snow.", "o": ["usless", "useles", "useless", "uselesss"], "a": 2, "why": "use + less: keep the e before -less. <b>useless</b>."}, {"q": "Grandpa is ______ bread.", "o": ["bakeing", "bakking", "bakng", "baking"], "a": 3, "why": "bake + ing: drop the e before -ing. <b>baking</b>."}, {"q": "The pool was ______ empty.", "o": ["completly", "completely", "completley", "compleatly"], "a": 1, "why": "complete + ly: keep the e before -ly. <b>completely</b>."}, {"q": "Which sentence is punctuated correctly?", "o": ["Dad asked, “Are you ready?”", "Dad asked, “Are you ready”?", "Dad asked “Are you ready?”.", "Dad asked, “Are you ready.”?"], "a": 0, "why": "The quoted words are the question, so the question mark goes <b>inside</b> the quotation marks."}, {"q": "Which sentence is punctuated correctly?", "o": ["Did Mom say, “It is time for bed?”", "Did Mom say, “It is time for bed”?", "Did Mom say “It is time for bed.”?", "Did Mom say “It is time for bed”.?"], "a": 1, "why": "Mom's words are a statement. The whole sentence is the question, so the question mark goes <b>outside</b>."}, {"q": "Which sentence is punctuated correctly?", "o": ["“Where are my shoes”? asked Leo.", "“Where are my shoes?”, asked Leo.", "“Where are my shoes?” asked Leo.", "“Where are my shoes,” asked Leo?"], "a": 2, "why": "The quote is a question, so the ? goes <b>inside</b>, and no comma follows it."}, {"q": "Which sentence is punctuated correctly?", "o": ["Did the sign say “Wet paint?”", "Did the sign say “Wet paint”?", "Did the sign say “Wet paint.”?", "Did the sign say, “Wet paint?”?"], "a": 1, "why": "The sign's words are a statement. The whole sentence asks, so the ? goes <b>outside</b>."}, {"q": "Which sentence is <strong>NOT</strong> punctuated correctly?", "o": ["Ava asked, “Can we go?”", "“Please wait,” said Dad.", "Did Leo say “yes”?", "Mom said, “Dinner is ready”?"], "a": 3, "why": "Mom's words are a statement, so it ends with a period inside the quotation marks: Mom said, “Dinner is ready.” The other three are correct."}], "rule": ["<b>Silent e.</b> Keep the e before an ending that starts with a consonant: safe → safe<b>ly</b>, use → use<b>less</b>, hope → hope<b>ful</b>. Drop the e before an ending that starts with a vowel: ride → rid<b>ing</b>, tire → tir<b>ed</b>, bake → bak<b>ing</b>.", "<b>The question mark and quotation marks.</b> Are the quoted words themselves a question? Then the ? goes <b>inside</b>. Are the quoted words a statement, but the whole sentence asks? Then the ? goes <b>outside</b>."]}, {"title": "Word meaning and sentences", "min": 8, "items": [{"q": "Noah gave a <em>thin excuse</em> for missing practice. What does “thin excuse” mean?", "o": ["a short excuse", "a quiet excuse", "an excuse that is hard to believe", "a funny excuse"], "a": 2, "why": "A “thin” excuse is one that does not hold up. It is <b>hard to believe</b>. Thin is not about size here."}, {"q": "Her aunt gave her a <em>cold look</em>. The look was…", "o": ["a look at the snow", "an unfriendly look", "a very quick look", "a sleepy look"], "a": 1, "why": "A cold look is <b>unfriendly</b>. Cold is about feelings here, not weather."}, {"q": "“That is a <em>bright idea</em>!” What does “bright idea” mean?", "o": ["an idea that glows", "a loud idea", "a very old idea", "a clever idea"], "a": 3, "why": "A bright idea is a <b>clever</b> one. Bright means smart here, not shiny."}, {"q": "His <em>sharp reply</em> surprised everyone. The reply was…", "o": ["pointy", "funny", "harsh", "quiet"], "a": 2, "why": "A sharp reply is <b>harsh</b> or unkind. Sharp is about words here, not points."}, {"q": "Eli walked home with a <em>heavy heart</em>. He felt…", "o": ["tired", "sad", "proud", "hungry"], "a": 1, "why": "A heavy heart is a <b>sad</b> heart. Heavy is about feelings here, not weight."}, {"q": "Which sentence has a <strong>metaphor</strong>?", "o": ["The snow fell like a soft blanket.", "Time is a thief that never rests.", "She is as quick as a fox.", "The wind sang in the trees."], "a": 1, "why": "“Time is a thief” says time <em>is</em> something else. A and C use like and as (similes). D gives the wind a voice."}, {"q": "Neither of the girls ______ her book.", "o": ["has", "have", "are", "were"], "a": 0, "why": "“Neither” means not one of them, so it takes the single verb <b>has</b>."}, {"q": "Which sentence is the best topic sentence?<br>______ Bats use sound to find food in the dark. They sleep upside down to save energy. Some eat fruit and others eat insects.", "o": ["I saw a bat once.", "Birds can fly too.", "Fruit is sweet.", "Bats have many special ways of living."], "a": 3, "why": "The other sentences give details about how bats live. The topic sentence covers <b>all</b> of them."}, {"q": "Which group of words is a complete sentence?", "o": ["After the long game.", "The small brown dog.", "My brother plays drums.", "Running across the field."], "a": 2, "why": "A sentence tells who did something and what they did. <b>My brother plays drums.</b>"}, {"q": "Choose the most exact word.<br>The cat ______ across the yard when it saw the dog.", "o": ["went", "dashed", "moved", "got"], "a": 1, "why": "<b>Dashed</b> means ran fast. It shows how the cat moved."}], "rule": ["Describing words like <b>thin, heavy, sharp, cold, bright</b> often tell about a feeling or a quality, not about size or weight.", "A <b>metaphor</b> says one thing <em>is</em> another. A <b>simile</b> uses like or as.", "<b>Neither, each, everyone</b> take the single verb: has, is.", "A <b>topic sentence</b> covers all the details. A <b>complete sentence</b> tells who did what."]}, {"title": "Reading habits", "min": 10, "items": [{"q": "What is the main idea of the passage?", "o": ["Penguins stay warm by huddling and taking turns.", "Penguins eat fish.", "Antarctica has strong winds.", "Penguins in the middle are always warm."], "a": 0, "why": "The main idea covers the whole passage. “Always warm” is too strong: the group takes turns.", "p": 0}, {"q": "Which detail is <strong>NOT</strong> in the passage?", "o": ["Huddles can hold thousands of birds.", "Penguins take turns on the outer edge.", "Penguins build nests of ice.", "Winter winds are very cold."], "a": 2, "why": "Nests of ice are not in the passage. The other three are.", "p": 0}, {"q": "Which sentence best shows that the penguins share the cold fairly?", "o": ["“Emperor penguins live in Antarctica, where winter winds are bitterly cold.”", "“A huddle can hold thousands of birds.”", "“To stay warm, the penguins stand close together in a huddle.”", "“Penguins in the middle are warmest, so the group slowly shuffles, and each penguin takes a turn on the cold outer edge.”"], "a": 3, "why": "Only this sentence says <b>each penguin takes a turn</b> on the cold edge.", "p": 0}, {"q": "What is the main idea of the story?", "o": ["Jo is afraid of all animals.", "Biscuit is a brown horse.", "Instructors give out helmets.", "Jo slowly becomes brave enough to try riding."], "a": 3, "why": "The whole story is about Jo getting braver. The other choices are small details, or too big (“all animals”).", "p": 1}, {"q": "How does Jo feel at the end?", "o": ["calm and sure of everything", "angry at the instructor", "bored", "nervous but willing to try"], "a": 3, "why": "Her hands still shook, but she smiled and said, “Let's try.” “Sure of everything” is too strong.", "p": 1}, {"q": "Each of these is in the story <strong>EXCEPT</strong>…", "o": ["Jo brushed the horse.", "The horse is named Biscuit.", "Jo fell off the horse.", "Jo's hands shook a little."], "a": 2, "why": "Jo never fell. The other three are in the story.", "p": 1}, {"q": "Why do some hatchlings crawl the wrong way?", "o": ["They cannot see at night.", "Bright lights from buildings confuse them.", "The moon goes out.", "The sea is too cold."], "a": 1, "why": "The passage says bright lights from hotels and streetlights confuse them.", "p": 2}, {"q": "Which statement would the author most likely agree with?", "o": ["Turning off beach lights can help hatchlings.", "Sea turtles never reach the sea.", "All hatchlings find the ocean without help.", "Hotels should be moved to the ocean."], "a": 0, "why": "The passage says towns turn off lights and it helps. Words like <b>never</b> and <b>all</b> are too strong.", "p": 2}, {"q": "Which sentence best shows that the changes are working?", "o": ["“Many sea turtles hatch on beaches at night.”", "“To help, many towns turn off beach lights during hatching season.”", "“Scientists say that these changes have helped more hatchlings reach the ocean.”", "“Today, bright lights from hotels and streetlights can confuse them.”"], "a": 2, "why": "Only this sentence says the changes <b>worked</b>: more hatchlings reach the ocean.", "p": 2}], "passages": true, "rule": ["Go <b>slowly on the first passage</b>. Read each question twice.", "For <b>NOT</b> or <b>EXCEPT</b>, find the three true ones. The odd one out is the answer.", "The <b>main idea</b> covers the whole passage, not one detail.", "Words like <b>always, never, all, exactly</b> are usually wrong unless the passage says them.", "For “which sentence shows…”, find the sentence that <b>proves</b> it."]}], "passages": [{"title": "Penguins in the Cold", "text": ["Emperor penguins live in Antarctica, where winter winds are bitterly cold. To stay warm, the penguins stand close together in a huddle. Penguins in the middle are warmest, so the group slowly shuffles, and each penguin takes a turn on the cold outer edge. A huddle can hold thousands of birds. Working as a team helps the penguins survive the winter."]}, {"title": "Jo and Biscuit", "text": ["Jo had never ridden a horse. At the stable, the instructor handed her a helmet and a brush. “First, make friends,” she said. Jo brushed Biscuit's brown coat slowly while he blew warm air onto her arm. After ten minutes, her shoulders relaxed.", "When it was time to climb on, Jo's hands still shook a little, but she smiled. “Okay,” she whispered. “Let's try.”"]}, {"title": "Turtles and Lights", "text": ["Many sea turtles hatch on beaches at night. The hatchlings follow the bright light of the moon over the water to reach the sea. Today, bright lights from hotels and streetlights can confuse them, and some turtles crawl the wrong way. To help, many towns turn off beach lights during hatching season. Scientists say that these changes have helped more hatchlings reach the ocean."]}]};</script>
+<script>
+(() => {
+  "use strict";
+  const KEY = "friday-v1";
+  const NTFY = "https://ntfy.sh/mapprac-h3iomrkh7egfh0xr";
+  const LET = ["A", "B", "C", "D"];
+  const $app = document.getElementById("app");
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { /* storage may be blocked */ } };
+  const done = () => (store.done ||= {});
+  let view = "home", run = null, lastSend = "", copyText = null;
+
+  const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const sess = () => DATA.sessions[run.s];
+
+  function summary(s, pass) {
+    const S = DATA.sessions[s], r = done()[s];
+    const lines = ["Friday practice, session " + (s + 1) + ": " + S.title + ", " + today()];
+    if (r) {
+      lines.push("First try: " + r.score + "/" + r.total + (r.secs ? " in " + Math.max(1, Math.round(r.secs / 60)) + " min" : ""));
+      lines.push(r.missed.length ? "Missed (her answer / key): " + r.missed.map(m => "Q" + m.n + " " + LET[m.c] + "/" + LET[m.k]).join(", ") : "Missed: none");
+      if (r.retry) lines.push("Second try on the missed ones: " + r.retry.score + "/" + r.retry.total);
+    }
+    return lines.join("\n");
+  }
+  async function push(s, title) {
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 12000);
+      const r = await fetch(NTFY, { method: "POST", body: summary(s), headers: { "Title": title, "Tags": "pencil2" }, signal: ctl.signal });
+      clearTimeout(to);
+      if (!r.ok) throw new Error("status " + r.status);
+      done()[s].sentAt = Date.now(); lastSend = "ok"; save(); return true;
+    } catch (e) { lastSend = "fail"; return false; }
+  }
+
+  function home() {
+    const cards = DATA.sessions.map((S, i) => {
+      const r = done()[i];
+      return `<section class="card"><h2>Session ${i + 1}</h2><h3>${S.title}</h3>
+        <div class="meta"><span class="pill">${S.items.length} questions</span><span class="pill">about ${S.min} min</span>${r ? `<span class="pill star">Last time: ${r.score} of ${r.total}</span>` : ""}</div>
+        <div class="row"><button class="btn" data-act="start" data-s="${i}">${r ? "Practice again" : "Start"}</button></div></section>`;
+    }).join("");
+    $app.innerHTML = `<header class="home-head"><h1>Friday warm-up</h1>
+      <p class="muted">Short practice for the MAP test. Each session starts with a rule card. After every answer you see right or wrong, and why. Do one or two sessions a day. Go slowly.</p></header>
+      <div class="cards">${cards}</div>`;
+    window.scrollTo(0, 0);
+  }
+
+  function ruleCard() {
+    const S = sess();
+    $app.innerHTML = `<p><button class="btn ghost" data-act="home" style="min-height:44px;padding:6px 18px">Back</button></p>
+      <h1 style="margin:16px 0">Session ${run.s + 1}: ${S.title}</h1>
+      <div class="rule"><h3>Remember this</h3>${S.rule.map(t => `<p>${t}</p>`).join("")}</div>
+      <p style="margin-top:22px"><button class="btn" data-act="begin">I am ready. Start the questions.</button></p>`;
+    window.scrollTo(0, 0);
+  }
+
+  function question() {
+    const S = sess(), idx = run.order[run.pos], it = S.items[idx], tot = run.order.length;
+    const picked = run.ans[idx], has = picked !== undefined;
+    const pass = S.passages && it.p !== undefined ? DATA.passages[it.p] : null;
+    const passage = pass ? `<article class="passage"><h3>${pass.title}</h3>${pass.text.map(t => `<p>${t}</p>`).join("")}</article>` : "";
+    const opts = it.o.map((t, n) => {
+      let cls = "opt";
+      if (has) { if (n === it.a) cls += " good"; else if (n === picked) cls += " bad"; }
+      return `<button class="${cls}" data-act="pick" data-n="${n}" ${has ? "disabled" : ""}><span class="k">${LET[n]}</span><span class="t">${t}</span></button>`;
+    }).join("");
+    const fb = has ? `<div class="fb ${picked === it.a ? "ok" : "no"}"><strong>${picked === it.a ? "Right." : "Not quite. The answer is " + LET[it.a] + "."}</strong><span class="w">${it.why}</span></div>` : "";
+    $app.innerHTML = `<div class="top"><div class="top-line"><strong>Session ${run.s + 1}${run.pass === 2 ? " · second try" : ""}</strong><span class="muted">Question ${run.pos + 1} of ${tot}</span></div>
+      <div class="bar"><i style="width:${((run.pos + (has ? 1 : 0)) / tot) * 100}%"></i></div></div>
+      <div class="stage ${pass ? "read" : ""}">${passage}
+        <section class="qbox"><p class="stem">${it.q}</p><div class="opts">${opts}</div>${fb}
+          <div class="nav"><span class="hint">${has ? "" : "Pick an answer."}</span>
+            <button class="btn" data-act="next" ${has ? "" : "disabled"}>${run.pos === tot - 1 ? "Finish" : "Next"}</button></div></section></div>`;
+    window.scrollTo(0, 0);
+  }
+
+  function results() {
+    const S = sess(), r = done()[run.s];
+    const rr = run.pass === 2 ? r.retry : null;
+    const head = rr ? `Second try: ${rr.score} of ${rr.total}` : `${r.score} of ${r.total}`;
+    const miss = r.missed.map(m => { const it = S.items[m.i]; return `<article class="rev no"><p class="stem">${it.q}</p><div class="ans"><span class="you no">You: ${LET[m.c]}. ${it.o[m.c]}</span><span class="key">Right answer: ${LET[it.a]}. ${it.o[it.a]}</span></div><p class="why">${it.why}</p></article>`; }).join("");
+    $app.innerHTML = `<p><button class="btn ghost" data-act="home" style="min-height:44px;padding:6px 18px">Back to sessions</button></p>
+      <h1 style="margin-top:16px">Session ${run.s + 1}: ${rr ? "second try" : "your score"}</h1>
+      <div class="score"><div class="tile"><span class="muted small">${rr ? "On the missed ones" : "First try"}</span><b>${head}</b></div>${rr ? `<div class="tile"><span class="muted small">First try was</span><b>${r.score} / ${r.total}</b></div>` : ""}</div>
+      <div class="row">${r.missed.length && !rr ? `<button class="btn" data-act="retry">Try the missed ones again</button>` : ""}
+        <button class="btn ghost" data-act="send">Send results to Dad</button><button class="btn ghost" data-act="mail">Email instead</button><button class="btn ghost" data-act="copy">Copy results</button></div>
+      <p class="hint" style="margin-top:10px">${r.sentAt ? "Sent to Dad." : (lastSend === "fail" ? "It did not send. Tap Email instead." : "Tap Send results to Dad.")}</p>
+      ${copyText ? `<textarea class="copybox" id="copybox" readonly>${copyText.replace(/</g, "&lt;")}</textarea>` : ""}
+      ${r.missed.length ? `<h2 style="margin-top:26px">Look at the ones you missed</h2>${miss}` : `<p style="margin-top:22px"><strong>You got every one right.</strong></p>`}`;
+    window.scrollTo(0, 0);
+  }
+
+  function finishPass() {
+    const S = sess(), items = S.items;
+    const secs = Math.round((Date.now() - run.t0) / 1000);
+    const miss = [];
+    run.order.forEach(i => { if (run.ans[i] !== items[i].a) miss.push({ i, n: i + 1, c: run.ans[i], k: items[i].a }); });
+    const score = run.order.length - miss.length;
+    if (run.pass === 1) {
+      done()[run.s] = { score, total: run.order.length, missed: miss, secs, at: Date.now() };
+      save(); view = "results"; results();
+      push(run.s, "Friday practice " + (run.s + 1) + ": " + score + "/" + run.order.length).then(() => { if (view === "results") results(); });
+    } else {
+      done()[run.s].retry = { score, total: run.order.length }; delete done()[run.s].sentAt; save(); view = "results"; results();
+      push(run.s, "Friday practice " + (run.s + 1) + " retry: " + score + "/" + run.order.length).then(() => { if (view === "results") results(); });
+    }
+  }
+
+  $app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
+    const act = b.dataset.act;
+    if (act === "start") { const s = Number(b.dataset.s); run = { s, pass: 1, order: DATA.sessions[s].items.map((_, i) => i), pos: 0, ans: {}, t0: Date.now() }; view = "rule"; copyText = null; ruleCard(); return; }
+    if (act === "home") { view = "home"; run = null; copyText = null; home(); return; }
+    if (act === "begin") { view = "q"; run.t0 = Date.now(); question(); return; }
+    if (act === "pick") { const idx = run.order[run.pos]; run.ans[idx] = Number(b.dataset.n); question(); return; }
+    if (act === "next") { if (run.pos === run.order.length - 1) finishPass(); else { run.pos++; question(); } return; }
+    if (act === "retry") { const r = done()[run.s]; run = { s: run.s, pass: 2, order: r.missed.map(m => m.i), pos: 0, ans: {}, t0: Date.now() }; view = "q"; question(); return; }
+    if (act === "send") { push(run.s, "Friday practice " + (run.s + 1) + " (sent by her)").then(() => { if (view === "results") results(); }); return; }
+    if (act === "mail") {
+      const a = document.createElement("a");
+      a.href = "mailto:?subject=" + encodeURIComponent("Practice results") + "&body=" + encodeURIComponent(summary(run.s));
+      document.body.appendChild(a); a.click(); a.remove(); return;
+    }
+    if (act === "copy") {
+      const t = summary(run.s);
+      const show = () => { copyText = t; results(); const box = document.getElementById("copybox"); if (box) { box.focus(); box.select(); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => { copyText = t + "\n\n(Copied.)"; results(); }, show); else show();
+    }
+  });
+  home();
+})();
+</script>
+</body></html>
