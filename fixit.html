@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow, noarchive"><meta name="color-scheme" content="light dark">
+<title>Quick Fix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+  /* Layout: one question per screen on a calm page; reading puts the passage beside the question on a wide iPad. */
+  :root {
+    --bg: #F3F5FA;
+    --surface: #FFFFFF;
+    --ink: #18213A;
+    --muted: #55607E;
+    --line: #D5DBE9;
+    --accent: #0B7A75;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #DCF1EF;
+    --challenge: #A85A00;
+    --challenge-soft: #FCEBD3;
+    --star: #B07A00;
+    --star-soft: #FFF1C9;
+    --good: #17703F;
+    --good-soft: #DBF1E4;
+    --bad: #B3261E;
+    --bad-soft: #FBE2E0;
+    --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Atkinson Hyperlegible", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111729; --surface: #1A2238; --ink: #EAF0FF; --muted: #A6B2CE; --line: #2D3856;
+      --accent: #4FCFC6; --accent-ink: #052321; --accent-soft: #163A3A;
+      --challenge: #FFB561; --challenge-soft: #3A2910;
+      --star: #FFD166; --star-soft: #3A3014;
+      --good: #6FD99A; --good-soft: #143525; --bad: #FF8F86; --bad-soft: #3D1C1A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111729; --surface: #1A2238; --ink: #EAF0FF; --muted: #A6B2CE; --line: #2D3856;
+    --accent: #4FCFC6; --accent-ink: #052321; --accent-soft: #163A3A;
+    --challenge: #FFB561; --challenge-soft: #3A2910;
+    --star: #FFD166; --star-soft: #3A3014;
+    --good: #6FD99A; --good-soft: #143525; --bad: #FF8F86; --bad-soft: #3D1C1A;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 20px; line-height: 1.55;
+    padding-block: 20px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.01em; }
+  h2 { font-size: 28px; font-weight: 800; }
+  h3 { font-size: 21px; font-weight: 600; }
+  p { margin: 0; }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 16px; }
+
+  /* home */
+  .home-head { display: grid; gap: 10px; margin-bottom: 28px; max-width: 46rem; }
+  .rules { display: grid; gap: 8px; padding: 0; margin: 14px 0 0; list-style: none; }
+  .rules li { display: flex; gap: 12px; align-items: baseline; }
+  .rules b { font-family: var(--font-display); color: var(--accent); min-width: 1.4em; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+  .card { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 26px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .card .meta { display: flex; gap: 10px 18px; flex-wrap: wrap; }
+  .pill { display: inline-block; border-radius: 99px; padding: 2px 12px; font-size: 15px; font-weight: 700; background: var(--accent-soft); color: var(--accent); }
+  .pill.ch { background: var(--challenge-soft); color: var(--challenge); }
+  .pill.star { background: var(--star-soft); color: var(--star); }
+  .btn { border: 0; border-radius: 14px; min-height: 56px; padding: 12px 26px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+  .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .btn.warn { background: var(--bad); color: #fff; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* quiz */
+  .top { display: grid; gap: 10px; margin-bottom: 18px; }
+  .top-line { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .bar { height: 12px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.25s ease; }
+  .stage { display: grid; gap: 18px; align-items: start; }
+  .stage.read { grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .stage.read { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } .passage { position: sticky; top: 12px; max-height: calc(100vh - 40px); overflow: auto; } }
+  .passage, .qbox { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 24px; min-width: 0; }
+  .passage h3 { margin-bottom: 12px; }
+  .passage p + p { margin-top: 14px; }
+  .passage p { font-size: 20px; line-height: 1.65; max-width: 38rem; }
+  .qhead { display: flex; gap: 8px 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .stem { font-size: 22px; font-weight: 700; margin-bottom: 18px; max-width: 40rem; }
+  .stem u { text-decoration-thickness: 2px; }
+  .opts { display: grid; gap: 12px; }
+  .opt { display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%; background: var(--bg); border: 2px solid var(--line); border-radius: 14px; padding: 14px 16px; min-height: 60px; }
+  .opt .k { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; font-weight: 700; font-family: var(--font-display); }
+  .opt .t { padding-top: 3px; min-width: 0; overflow-wrap: anywhere; }
+  .opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .opt[aria-pressed="true"] .k { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .starbtn { display: inline-flex; gap: 8px; align-items: center; border: 2px solid var(--line); background: transparent; border-radius: 99px; padding: 6px 16px; font-weight: 700; min-height: 44px; }
+  .starbtn[aria-pressed="true"] { background: var(--star-soft); border-color: var(--star); color: var(--star); }
+  .nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 22px; align-items: center; }
+  .hint { color: var(--muted); font-size: 16px; }
+
+  /* results */
+  .score { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 14px; margin: 18px 0 26px; }
+  .tile { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .tile b { display: block; font-family: var(--font-display); font-size: 40px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .skills { display: grid; gap: 12px; margin: 14px 0 28px; }
+  .skill { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4.5rem; gap: 12px; align-items: center; }
+  @media (max-width: 640px) { .skill { grid-template-columns: 1fr 4rem; } .skill .bar { grid-column: 1 / -1; order: 3; } }
+  .skill .n { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+  .bar.sk > i.low { background: var(--challenge); }
+  .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 16px; }
+  .tab { border: 2px solid var(--line); background: transparent; border-radius: 99px; padding: 8px 20px; font-weight: 700; min-height: 48px; }
+  .tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .rev { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; margin-bottom: 14px; min-width: 0; }
+  .rev.ok { border-left: 8px solid var(--good); }
+  .rev.no { border-left: 8px solid var(--bad); }
+  .rev .stem { font-size: 19px; margin: 0; }
+  .ans { display: flex; gap: 8px; flex-wrap: wrap; font-size: 18px; }
+  .ans span { padding: 2px 12px; border-radius: 10px; }
+  .ans .you.no { background: var(--bad-soft); color: var(--bad); }
+  .ans .you.ok, .ans .key { background: var(--good-soft); color: var(--good); }
+  .why { font-size: 18px; color: var(--muted); }
+  textarea.copybox { width: 100%; min-height: 220px; font: 16px/1.4 ui-monospace, Menlo, monospace; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-radius: 12px; padding: 12px; }
+  @media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+</style>
+<style>
+.rule{background:var(--accent-soft);border:2px solid var(--accent);border-radius:18px;padding:22px;display:grid;gap:12px;max-width:44rem}
+.rule p{margin:0}
+.opt.good{border-color:var(--good);background:var(--good-soft)} .opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt[disabled]{cursor:default}
+.fb{margin-top:14px;padding:12px 16px;border-radius:12px;font-size:19px}
+.fb.ok{background:var(--good-soft);color:var(--good)} .fb.no{background:var(--bad-soft);color:var(--bad)}
+.fb .w{color:var(--ink);display:block;margin-top:6px;font-size:18px}
+.done{color:var(--good);font-weight:700}
+</style><style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body>
+<div class="wrap" id="app" aria-live="polite"></div>
+<script>const DATA = {"sessions": [{"title": "After the closing quote mark", "min": 3, "shuffle": true, "rule": ["<b>Nothing follows a quoted ? or !</b> If the quote ends with <b>?</b> or <b>!</b>, do not add a comma after the closing quotation mark. Write <em>“Is it late?” asked Ben.</em> — not <em>“Is it late?”, asked Ben.</em>", "<b>One end mark per sentence.</b> Never two. <em>Did Sam say “yes”?</em> has one question mark. <em>Did Sam say, “yes?”?</em> has two, so it is wrong.", "<b>A quoted statement takes a comma</b>, and the comma goes <b>inside</b>: <em>“I am ready,” said Priya.</em>"], "items": [{"q": "Which sentence is punctuated correctly?", "o": ["“Is the bus here?”, asked Omar.", "“Is the bus here?” asked Omar.", "“Is the bus here?”, asked Omar!", "“Is the bus here,” asked Omar?"], "a": 1, "why": "The quoted words are the question, so the <b>?</b> stays inside. Nothing follows it — <b>no comma</b>."}, {"q": "Which sentence is punctuated correctly?", "o": ["“Watch out!” shouted Nina.", "“Watch out!”, shouted Nina.", "“Watch out,” shouted Nina!", "“Watch out!”. shouted Nina."], "a": 0, "why": "An exclamation mark inside the quote needs <b>no comma after it</b>. The sentence just carries on."}, {"q": "Which sentence is <strong>NOT</strong> punctuated correctly?", "o": ["“Who left the gate open?” asked Mom.", "“Run!” yelled Theo.", "“The door is locked,” said Mia.", "“Are we late?”, asked Jun."], "a": 3, "why": "No comma after a quoted question mark. It should be: “Are we late?” asked Jun. The other three are correct."}, {"q": "Which sentence is punctuated correctly?", "o": ["Mom asked, “Did you brush your teeth?”", "Mom asked, “Did you brush your teeth”?", "Mom asked “Did you brush your teeth?”.", "Mom asked, “Did you brush your teeth?”."], "a": 0, "why": "The quoted words are the question, so the <b>?</b> goes inside — and the sentence needs <b>nothing</b> after the closing quotation mark."}, {"q": "Which sentence is punctuated correctly?", "o": ["“I finished my homework,” said Ivy.", "“I finished my homework.” said Ivy.", "“I finished my homework”, said Ivy.", "“I finished my homework” said Ivy."], "a": 0, "why": "A quoted <b>statement</b> before <em>said Ivy</em> ends with a <b>comma</b>, and the comma goes <b>inside</b> the quotation marks."}, {"q": "Which sentence is <strong>NOT</strong> punctuated correctly?", "o": ["Did Sam say “yes”?", "Did Sam say, “yes?”?", "“Yes,” said Sam.", "“Did he say yes?” asked Ana."], "a": 1, "why": "A sentence gets <b>one</b> end mark, not two. It should be: Did Sam say “yes”?"}]}, {"title": "Inside or outside?", "min": 3, "shuffle": true, "rule": ["<b>Ask one question: who is doing the asking?</b>", "If the <b>quoted words</b> are the question, the <b>?</b> goes <b>inside</b>: <em>The teacher asked, “Who is next?”</em>", "If the quoted words are a <b>statement</b> and the <b>whole sentence</b> asks, the <b>?</b> goes <b>outside</b>: <em>Did Grandma say “the soup is ready”?</em>", "The trick: read just the words inside the quotation marks. Could they end with a period on their own? Then the <b>?</b> belongs outside."], "items": [{"q": "Which sentence is punctuated correctly?", "o": ["Did Grandma say, “The soup is ready?”", "Did Grandma say “the soup is ready”?", "Did Grandma say “the soup is ready.”?", "Did Grandma say “the soup is ready”"], "a": 1, "why": "Grandma's words are a <b>statement</b>. The whole sentence asks, so the <b>?</b> goes <b>outside</b>."}, {"q": "Which sentence is punctuated correctly?", "o": ["The teacher asked, “Who wants to read next?”", "The teacher asked, “Who wants to read next”?", "The teacher asked “Who wants to read next?”.", "The teacher asked, “Who wants to read next.”"], "a": 0, "why": "The <b>quoted words</b> are the question, so the <b>?</b> goes <b>inside</b>."}, {"q": "Where does the question mark go?<br>Did the coach really say “practice is cancelled” ______", "o": ["inside the quotation marks", "outside the quotation marks", "in both places", "in neither place"], "a": 1, "why": "<em>Practice is cancelled</em> is a statement. The <b>sentence</b> is the question, so the <b>?</b> goes outside: Did the coach really say “practice is cancelled”?"}, {"q": "Which sentence is punctuated correctly?", "o": ["“Why is the sky blue?” asked Emily.", "“Why is the sky blue”? asked Emily.", "“Why is the sky blue?”, asked Emily.", "Why is the sky blue? asked Emily."], "a": 0, "why": "Emily's words are the question, so the <b>?</b> goes <b>inside</b> — and no comma follows it."}, {"q": "Which sentence is punctuated correctly?", "o": ["Did the sign say, “Do not enter?”", "Did the sign say “do not enter”?", "Did the sign say “do not enter?”", "Did the sign say, “do not enter.”?"], "a": 1, "why": "The sign's words are a <b>statement</b>. The whole sentence asks, so the <b>?</b> goes <b>outside</b>."}, {"q": "Which sentence is <strong>NOT</strong> punctuated correctly?", "o": ["Dad asked, “Are the tickets ready?”", "Did Mom say, “We are leaving at six?”", "Did Mom say “we are leaving at six”?", "“Are we there yet?” asked Audrey."], "a": 1, "why": "Mom's words are a statement, so the <b>?</b> belongs <b>outside</b>: Did Mom say “we are leaving at six”? The other three are correct."}]}, {"title": "its or it's", "min": 3, "shuffle": true, "rule": ["<b>Say “it is” in the blank.</b> If the sentence still makes sense, write <b>it's</b>. If it does not, write <b>its</b>.", "<em>“I think it is going to rain”</em> makes sense → <b>it's</b>. <em>“The tree lost it is leaves”</em> does not → <b>its</b>.", "<b>its'</b> is never a word. There is no such spelling. If you see it, it is wrong.", "<b>its</b> means it owns something, and it has <b>no apostrophe</b> — just like <em>his</em> and <em>hers</em> have none."], "items": [{"q": "I think ______ going to rain.", "o": ["its", "it's", "its'", "its is"], "a": 1, "why": "Say “it is”: “I think <b>it is</b> going to rain.” That works, so <b>it's</b>."}, {"q": "The tree lost ______ leaves in autumn.", "o": ["it's", "its", "its'", "it is"], "a": 1, "why": "Say “it is”: “The tree lost <b>it is</b> leaves.” That is wrong, so use <b>its</b>."}, {"q": "Which spelling is <strong>never</strong> correct?", "o": ["its", "it's", "its'", "it is"], "a": 2, "why": "<b>its'</b> is not a word in English. Only <b>its</b> (it owns something) and <b>it's</b> (it is) exist."}, {"q": "The bird built ______ nest, and now ______ full of eggs.", "o": ["it's / its", "its / it's", "its / its", "it's / it's"], "a": 1, "why": "The nest belongs to the bird → <b>its</b>. “Now <b>it is</b> full of eggs” works → <b>it's</b>."}, {"q": "______ been a long day, and the puppy is asleep in ______ bed.", "o": ["Its / its", "It's / it's", "It's / its", "Its / it's"], "a": 2, "why": "“<b>It is</b> been a long day” … say it as “It has been” — the short form is still <b>It's</b>. The bed belongs to the puppy → <b>its</b>."}, {"q": "Which sentence is correct?", "o": ["The cat licked it's paw.", "The cat licked its paw.", "The cat licked its' paw.", "The cat licked it is paw."], "a": 1, "why": "The paw belongs to the cat, so <b>its</b> with no apostrophe. “The cat licked <b>it is</b> paw” is wrong, so it's cannot be right."}]}, {"title": "Keep the e", "min": 3, "shuffle": true, "rule": ["<b>Keep the e</b> before an ending that starts with a <b>consonant</b>: use → use<b>ful</b>, use → use<b>less</b>, nice → nice<b>ly</b>, late → late<b>ness</b>.", "<b>Drop the e</b> before an ending that starts with a <b>vowel</b>: drive → driv<b>ing</b>, smile → smil<b>ing</b>, tire → tir<b>ed</b>.", "The test: look at the <b>first letter of the ending</b>. l, f, n, m are consonants, so the e stays."], "items": [{"q": "The directions were ______ to follow.", "o": ["usful", "useful", "usefull", "usefal"], "a": 1, "why": "use + ful: <b>keep</b> the e before -ful. <b>useful</b>."}, {"q": "She spoke ______ to the new student.", "o": ["nicly", "nicely", "nicley", "nicelly"], "a": 1, "why": "nice + ly: <b>keep</b> the e before -ly. <b>nicely</b>."}, {"q": "The broken umbrella was ______.", "o": ["usless", "useless", "useles", "uselless"], "a": 1, "why": "use + less: <b>keep</b> the e before -less. <b>useless</b>."}, {"q": "The ______ of the bus made us miss the start.", "o": ["latness", "lateness", "latenes", "laytness"], "a": 1, "why": "late + ness: <b>keep</b> the e before -ness. <b>lateness</b>."}, {"q": "Mom is ______ us to the game.", "o": ["driveing", "driving", "drivving", "drivng"], "a": 1, "why": "drive + ing: <b>drop</b> the e before -ing. <b>driving</b>. The ending starts with a vowel, so the e goes."}, {"q": "Which word is spelled <strong>correctly</strong>?", "o": ["hopeful", "safly", "usless", "nicly"], "a": 0, "why": "hope + ful <b>keeps</b> the e. The other three dropped an e that should stay: safe<b>ly</b>, use<b>less</b>, nice<b>ly</b>."}]}, {"title": "Metaphor, simile, and words with two meanings", "min": 3, "shuffle": true, "rule": ["A <b>metaphor</b> says one thing <em>is</em> another: <em>Her room was a zoo.</em>", "A <b>simile</b> uses <b>like</b> or <b>as</b>: <em>My bag was as heavy as a rock.</em>", "<b>Personification</b> gives a human action to a thing: <em>The wind whispered.</em>", "Describing words like <b>bitter, flat, warm, hollow, sharp</b> usually tell about a <b>feeling</b>, not about taste, shape or heat."], "items": [{"q": "Which sentence has a <strong>metaphor</strong>?", "o": ["The clouds looked like cotton.", "Her bedroom was a zoo that morning.", "He ran as fast as a cheetah.", "The old door groaned."], "a": 1, "why": "A metaphor says one thing <em>is</em> another: her room <b>was</b> a zoo. The first and third use like and as (similes). The last gives the door a human sound."}, {"q": "Which sentence has a <strong>simile</strong>?", "o": ["The lake was a sheet of glass.", "The thunder grumbled all night.", "My backpack was as heavy as a rock.", "Fear is a shadow."], "a": 2, "why": "A simile uses <b>like</b> or <b>as</b>. The first and last are metaphors. The thunder one gives thunder a human sound."}, {"q": "Which sentence uses <strong>personification</strong>?", "o": ["The wind whispered through the grass.", "The wind was like a train.", "The wind was very strong.", "The wind is a thief."], "a": 0, "why": "Personification gives a <b>human action</b> to a thing — wind cannot really whisper. The second is a simile and the last is a metaphor."}, {"q": "“The test was a breeze.” This means the test was…", "o": ["windy", "easy", "very long", "outside"], "a": 1, "why": "A breeze here means <b>easy</b>. It is a metaphor, not real wind."}, {"q": "Her <em>bitter</em> words hurt his feelings. The words were…", "o": ["sour tasting", "unkind", "very loud", "spoken slowly"], "a": 1, "why": "Bitter is about <b>feelings</b> here, not taste. The words were <b>unkind</b>."}, {"q": "He gave a <em>flat answer</em>. The answer was…", "o": ["level and smooth", "written down", "dull, with no feeling", "very long"], "a": 2, "why": "Flat here means <b>dull, with no feeling</b>. It is not about shape."}]}, {"title": "Mixed: everything she missed", "min": 4, "shuffle": true, "cold": true, "rule": [], "items": [{"q": "Which sentence is punctuated correctly?", "o": ["“Is this your coat?”, asked Mrs. Diaz.", "“Is this your coat?” asked Mrs. Diaz.", "“Is this your coat”? asked Mrs. Diaz.", "“Is this your coat,” asked Mrs. Diaz?"], "a": 1, "why": "The quoted words are the question, so the <b>?</b> goes inside — and <b>no comma</b> follows it."}, {"q": "Which sentence is punctuated correctly?", "o": ["Did the note say, “Meet me at noon?”", "Did the note say “meet me at noon”?", "Did the note say “meet me at noon?”", "Did the note say, “meet me at noon.”?"], "a": 1, "why": "The note's words are a statement. The whole sentence asks, so the <b>?</b> goes <b>outside</b>."}, {"q": "Which sentence is <strong>NOT</strong> punctuated correctly?", "o": ["“Stop!”, said the guard.", "“Stop!” said the guard.", "“Please wait,” said the guard.", "Did the guard say “stop”?"], "a": 0, "why": "No comma after a quoted exclamation mark: “Stop!” said the guard."}, {"q": "The ladder was ______ without its last step.", "o": ["usless", "useless", "useles", "uselless"], "a": 1, "why": "use + less: <b>keep</b> the e before -less. <b>useless</b>."}, {"q": "Grandpa waved ______ from the porch.", "o": ["politly", "politely", "politley", "polightly"], "a": 1, "why": "polite + ly: <b>keep</b> the e before -ly. <b>politely</b>."}, {"q": "The baby is ______ at the dog.", "o": ["smileing", "smiling", "smilling", "smilng"], "a": 1, "why": "smile + ing: <b>drop</b> the e before -ing. <b>smiling</b>."}, {"q": "Which sentence has a <strong>metaphor</strong>?", "o": ["The rain tapped on the roof.", "Homework is a mountain this week.", "The snow was like powder.", "He was as quiet as a mouse."], "a": 1, "why": "A metaphor says one thing <em>is</em> another: homework <b>is</b> a mountain."}, {"q": "Mom gave him a <em>warm welcome</em>. The welcome was…", "o": ["hot", "friendly", "short", "loud"], "a": 1, "why": "A warm welcome is a <b>friendly</b> one. Warm is about feelings here, not heat."}, {"q": "The clock stopped because ______ battery died.", "o": ["it's", "its", "its'", "it is"], "a": 1, "why": "The battery belongs to the clock, so <b>its</b>, with no apostrophe. “Because <b>it is</b> battery died” is wrong."}, {"q": "______ too cold to swim today.", "o": ["Its", "It's", "Its'", "Its is"], "a": 1, "why": "Say “it is”: “<b>It is</b> too cold to swim today.” That works, so <b>It's</b>."}]}], "passages": []};</script>
+<script>
+(() => {
+  "use strict";
+  const KEY = "fixit-v1";
+  const NTFY = "https://ntfy.sh/mapprac-h3iomrkh7egfh0xr";
+  const LET = ["A", "B", "C", "D"];
+  const $app = document.getElementById("app");
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { /* storage may be blocked */ } };
+  const done = () => (store.done ||= {});
+  let view = "home", run = null, lastSend = "", copyText = null, homeCopy = { s: -1, t: "" };
+
+  const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const sess = () => DATA.sessions[run.s];
+  const shuffled = n => { const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const snip = h => h.replace(/<[^>]+>/g, "").replace(/_+/g, "__").replace(/\s+/g, " ").trim().slice(0, 34);
+  const wide = h => h.replace(/<[^>]+>/g, "").replace(/_+/g, "__").replace(/\s+/g, " ").trim().slice(0, 80);
+
+  function summary(s, pass) {
+    const S = DATA.sessions[s], r = done()[s];
+    const lines = ["Quick fix, session " + (s + 1) + ": " + S.title + ", " + today()];
+    if (r) {
+      lines.push("First try: " + r.score + "/" + r.total + (r.secs ? " in " + Math.max(1, Math.round(r.secs / 60)) + " min" : ""));
+      if (r.missed.length) {
+        lines.push("Missed " + r.missed.length + " of " + r.total + ":");
+        r.missed.forEach(m => {
+          const it = S.items[m.i];
+          lines.push("Q" + m.n + ". " + wide(it.q));
+          lines.push("   she put: " + wide(it.o[m.c]));
+          lines.push("   answer:  " + wide(it.o[m.k]));
+        });
+      } else { lines.push("Missed: none"); }
+      if (r.retry) lines.push("Second try on the missed ones: " + r.retry.score + "/" + r.retry.total);
+    }
+    return lines.join("\n");
+  }
+  async function push(s, title, attempts) {
+    attempts = attempts || 2;
+    for (let n = 0; n < attempts; n++) {
+      try {
+        const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 12000);
+        const r = await fetch(NTFY, { method: "POST", body: summary(s), headers: { "Title": title, "Tags": "pencil2" }, signal: ctl.signal });
+        clearTimeout(to);
+        if (!r.ok) throw new Error("status " + r.status);
+        done()[s].sentAt = Date.now(); lastSend = "ok"; save(); return true;
+      } catch (e) {
+        if (n < attempts - 1) await new Promise(res => setTimeout(res, 2000));
+      }
+    }
+    lastSend = "fail"; return false;
+  }
+
+  function home() {
+    const cards = DATA.sessions.map((S, i) => {
+      const r = done()[i];
+      const unsent = r && !r.sentAt;
+      return `<section class="card"><h2>${S.cold ? "Last: mixed" : "Session " + (i + 1)}</h2><h3>${S.title}</h3>
+        <div class="meta"><span class="pill">${S.items.length} questions</span><span class="pill">about ${S.min} min</span>${r ? `<span class="pill star">Last time: ${r.score} of ${r.total}</span>` : ""}${r ? (r.sentAt ? `<span class="pill">Sent to Dad</span>` : `<span class="pill star">Not sent yet</span>`) : ""}</div>
+        <div class="row"><button class="btn" data-act="start" data-s="${i}">${r ? "Practice again" : "Start"}</button>${unsent ? `<button class="btn ghost" data-act="hsend" data-s="${i}">Send to Dad</button><button class="btn ghost" data-act="hcopy" data-s="${i}">Copy</button>` : ""}</div>
+        ${homeCopy.s === i && homeCopy.t ? `<textarea class="copybox" id="copybox" readonly>${homeCopy.t}</textarea>` : ""}</section>`;
+    }).join("");
+    $app.innerHTML = `<header class="home-head"><h1>Quick fix</h1>
+      <p class="muted">Six short sessions, about three minutes each, on the four things to tighten up before the test. Each one starts with a rule card. After every answer you see right or wrong, and why. Do them in order. The last one mixes everything together.</p></header>
+      <div class="cards">${cards}</div>`;
+    window.scrollTo(0, 0);
+  }
+
+  function ruleCard() {
+    const S = sess();
+    $app.innerHTML = `<p><button class="btn ghost" data-act="home" style="min-height:44px;padding:6px 18px">Back</button></p>
+      <h1 style="margin:16px 0">${S.cold ? "Last session" : "Session " + (run.s + 1)}: ${S.title}</h1>
+      <div class="rule">${S.cold ? "<h3>No rule card this time</h3><p>You have learned the rules. Now they come mixed up, like on the real test. Use the tricks: take the other person out, say “it is”, keep or drop the silent e, ask whose question it is, and think about feelings.</p><p>You still see right or wrong after every answer.</p>" : "<h3>Remember this</h3>" + S.rule.map(t => `<p>${t}</p>`).join("")}</div>
+      <p style="margin-top:22px"><button class="btn" data-act="begin">I am ready. Start the questions.</button></p>`;
+    window.scrollTo(0, 0);
+  }
+
+  function question() {
+    const S = sess(), idx = run.order[run.pos], it = S.items[idx], tot = run.order.length;
+    const picked = run.ans[idx], has = picked !== undefined;
+    const pass = S.passages && it.p !== undefined ? DATA.passages[it.p] : null;
+    const passage = pass ? `<article class="passage"><h3>${pass.title}</h3>${pass.text.map(t => `<p>${t}</p>`).join("")}</article>` : "";
+    const opts = it.o.map((t, n) => {
+      let cls = "opt";
+      if (has) { if (n === it.a) cls += " good"; else if (n === picked) cls += " bad"; }
+      return `<button class="${cls}" data-act="pick" data-n="${n}" ${has ? "disabled" : ""}><span class="k">${LET[n]}</span><span class="t">${t}</span></button>`;
+    }).join("");
+    const fb = has ? `<div class="fb ${picked === it.a ? "ok" : "no"}"><strong>${picked === it.a ? "Right." : "Not quite. The answer is " + LET[it.a] + "."}</strong><span class="w">${it.why}</span></div>` : "";
+    $app.innerHTML = `<div class="top"><div class="top-line"><strong>Session ${run.s + 1}${run.pass === 2 ? " · second try" : ""}</strong><span class="muted">Question ${run.pos + 1} of ${tot}</span></div>
+      <div class="bar"><i style="width:${((run.pos + (has ? 1 : 0)) / tot) * 100}%"></i></div></div>
+      <div class="stage ${pass ? "read" : ""}">${passage}
+        <section class="qbox"><p class="stem">${it.q}</p><div class="opts">${opts}</div>${fb}
+          <div class="nav"><span class="hint">${has ? "" : "Pick an answer."}</span>
+            <button class="btn" data-act="next" ${has ? "" : "disabled"}>${run.pos === tot - 1 ? "Finish" : "Next"}</button></div></section></div>`;
+    window.scrollTo(0, 0);
+  }
+
+  function results() {
+    const S = sess(), r = done()[run.s];
+    const rr = run.pass === 2 ? r.retry : null;
+    const head = rr ? `Second try: ${rr.score} of ${rr.total}` : `${r.score} of ${r.total}`;
+    const miss = r.missed.map(m => { const it = S.items[m.i]; return `<article class="rev no"><p class="stem">${it.q}</p><div class="ans"><span class="you no">You: ${LET[m.c]}. ${it.o[m.c]}</span><span class="key">Right answer: ${LET[it.a]}. ${it.o[it.a]}</span></div><p class="why">${it.why}</p></article>`; }).join("");
+    $app.innerHTML = `<p><button class="btn ghost" data-act="home" style="min-height:44px;padding:6px 18px">Back to sessions</button></p>
+      <h1 style="margin-top:16px">Session ${run.s + 1}: ${rr ? "second try" : "your score"}</h1>
+      <div class="score"><div class="tile"><span class="muted small">${rr ? "On the missed ones" : "First try"}</span><b>${head}</b></div>${rr ? `<div class="tile"><span class="muted small">First try was</span><b>${r.score} / ${r.total}</b></div>` : ""}</div>
+      <div class="row">${r.missed.length && !rr ? `<button class="btn" data-act="retry">Try the missed ones again</button>` : ""}
+        <button class="btn ghost" data-act="send">Send results to Dad</button><button class="btn ghost" data-act="mail">Email instead</button><button class="btn ghost" data-act="copy">Copy results</button></div>
+      <p class="hint" style="margin-top:10px">${r.sentAt ? "Sent to Dad." : (lastSend === "fail" ? "It did not send. Tap Email instead." : "Tap Send results to Dad.")}</p>
+      ${copyText ? `<textarea class="copybox" id="copybox" readonly>${copyText.replace(/</g, "&lt;")}</textarea>` : ""}
+      ${r.missed.length ? `<h2 style="margin-top:26px">Look at the ones you missed</h2>${miss}` : `<p style="margin-top:22px"><strong>You got every one right.</strong></p>`}`;
+    window.scrollTo(0, 0);
+  }
+
+  function finishPass() {
+    const S = sess(), items = S.items;
+    const secs = Math.round((Date.now() - run.t0) / 1000);
+    const miss = [];
+    run.order.forEach(i => { if (run.ans[i] !== items[i].a) miss.push({ i, n: i + 1, c: run.ans[i], k: items[i].a }); });
+    const score = run.order.length - miss.length;
+    if (run.pass === 1) {
+      done()[run.s] = { score, total: run.order.length, missed: miss, secs, at: Date.now() };
+      save(); view = "results"; results();
+      push(run.s, "Quick fix " + (run.s + 1) + ": " + score + "/" + run.order.length).then(() => { if (view === "results") results(); });
+    } else {
+      done()[run.s].retry = { score, total: run.order.length }; delete done()[run.s].sentAt; save(); view = "results"; results();
+      push(run.s, "Quick fix " + (run.s + 1) + " retry: " + score + "/" + run.order.length).then(() => { if (view === "results") results(); });
+    }
+  }
+
+  $app.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
+    const act = b.dataset.act;
+    if (act === "start") { const s = Number(b.dataset.s); run = { s, pass: 1, order: DATA.sessions[s].shuffle ? shuffled(DATA.sessions[s].items.length) : DATA.sessions[s].items.map((_, i) => i), pos: 0, ans: {}, t0: Date.now() }; view = "rule"; copyText = null; ruleCard(); return; }
+    if (act === "home") { view = "home"; run = null; copyText = null; home(); return; }
+    if (act === "hsend") {
+      const s = Number(b.dataset.s);
+      b.disabled = true; b.textContent = "Sending...";
+      push(s, "Quick fix " + (s + 1) + " (sent later)").then(ok => {
+        homeCopy = ok ? { s: -1, t: "" } : { s, t: summary(s) + "\n\n(It still did not send. Copy this and text it to Dad.)" };
+        home();
+      });
+      return;
+    }
+    if (act === "hcopy") {
+      const s = Number(b.dataset.s); const t = summary(s);
+      const show = () => { homeCopy = { s, t }; home(); const box = document.getElementById("copybox"); if (box) { box.focus(); box.select(); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => { homeCopy = { s, t: t + "\n\n(Copied.)" }; home(); }, show); else show();
+      return;
+    }
+    if (act === "begin") { view = "q"; run.t0 = Date.now(); question(); return; }
+    if (act === "pick") { const idx = run.order[run.pos]; run.ans[idx] = Number(b.dataset.n); question(); return; }
+    if (act === "next") { if (run.pos === run.order.length - 1) finishPass(); else { run.pos++; question(); } return; }
+    if (act === "retry") { const r = done()[run.s]; run = { s: run.s, pass: 2, order: r.missed.map(m => m.i), pos: 0, ans: {}, t0: Date.now() }; view = "q"; question(); return; }
+    if (act === "send") { push(run.s, "Quick fix " + (run.s + 1) + " (sent by her)").then(() => { if (view === "results") results(); }); return; }
+    if (act === "mail") {
+      const a = document.createElement("a");
+      a.href = "mailto:?subject=" + encodeURIComponent("Practice results") + "&body=" + encodeURIComponent(summary(run.s));
+      document.body.appendChild(a); a.click(); a.remove(); return;
+    }
+    if (act === "copy") {
+      const t = summary(run.s);
+      const show = () => { copyText = t; results(); const box = document.getElementById("copybox"); if (box) { box.focus(); box.select(); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => { copyText = t + "\n\n(Copied.)"; results(); }, show); else show();
+    }
+  });
+  home();
+})();
+</script>
+</body></html>

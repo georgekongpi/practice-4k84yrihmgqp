@@ -157,13 +157,22 @@
   const sess = () => DATA.sessions[run.s];
   const shuffled = n => { const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const snip = h => h.replace(/<[^>]+>/g, "").replace(/_+/g, "__").replace(/\s+/g, " ").trim().slice(0, 34);
+  const wide = h => h.replace(/<[^>]+>/g, "").replace(/_+/g, "__").replace(/\s+/g, " ").trim().slice(0, 80);
 
   function summary(s, pass) {
     const S = DATA.sessions[s], r = done()[s];
     const lines = ["Friday practice, session " + (s + 1) + ": " + S.title + ", " + today()];
     if (r) {
       lines.push("First try: " + r.score + "/" + r.total + (r.secs ? " in " + Math.max(1, Math.round(r.secs / 60)) + " min" : ""));
-      lines.push(r.missed.length ? "Missed (her answer / key): " + r.missed.map(m => "Q" + m.n + " (" + snip(S.items[m.i].q) + ") " + LET[m.c] + "/" + LET[m.k]).join("; ") : "Missed: none");
+      if (r.missed.length) {
+        lines.push("Missed " + r.missed.length + " of " + r.total + ":");
+        r.missed.forEach(m => {
+          const it = S.items[m.i];
+          lines.push("Q" + m.n + ". " + wide(it.q));
+          lines.push("   she put: " + wide(it.o[m.c]));
+          lines.push("   answer:  " + wide(it.o[m.k]));
+        });
+      } else { lines.push("Missed: none"); }
       if (r.retry) lines.push("Second try on the missed ones: " + r.retry.score + "/" + r.retry.total);
     }
     return lines.join("\n");
