@@ -354,7 +354,7 @@ const READ = [
       <p class="muted">Time: ${mins(st.secs)}. Challenge questions are meant to be harder, so a lower score there is expected.</p>
       <h2 style="margin-top:26px">By skill</h2>
       <div class="skills">${sk.map(([n, v]) => `<div class="skill"><span>${esc(n)}</span><div class="bar sk"><i class="${pct(v[0], v[1]) < 60 ? "low" : ""}" style="width:${pct(v[0], v[1])}%"></i></div><span class="n">${v[0]} / ${v[1]}</span></div>`).join("")}</div>
-      <div class="row"><button class="btn" data-act="copy">Copy results for Dad</button></div>
+      <div class="row"><button class="btn" data-act="mail">Email results to Dad</button><button class="btn ghost" data-act="copy">Copy results</button></div><p class="hint" style="margin-top:10px">Tap Email results to Dad. Your email app opens with the results filled in. Add Dad as the person to send it to, then tap Send. If the email app does not open, tap Copy results and paste it into a message.</p>
       ${copyText ? `<p class="hint" style="margin:12px 0 6px">Select all of this text and copy it:</p><textarea class="copybox" id="copybox" readonly>${esc(copyText)}</textarea>` : ""}
       <h2 style="margin-top:30px">Look at the answers</h2>
       <div class="tabs"><button class="tab" data-act="tab" data-t="missed" aria-pressed="${tab === "missed"}">Missed (${r.missed.length})</button><button class="tab" data-act="tab" data-t="all" aria-pressed="${tab === "all"}">All ${r.total}</button></div>
@@ -371,7 +371,7 @@ const READ = [
 
   function summaryText(k) {
     const s = SECTIONS[k], st = get(k), r = score(k);
-    const lines = [`${s.name} practice, ${new Date().toISOString().slice(0, 10)}`, `Score ${r.right}/${r.total} (${pct(r.right, r.total)}%). Grade 4 level ${r.L[0]}/${r.L[1]}. Challenge ${r.H[0]}/${r.H[1]}. Time ${mins(st.secs)}.`, `Marked Not sure: ${r.starN} (${r.starRight} right).`, "By skill:"];
+    const lines = [`${s.name} practice, ${(() => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); })()}`, `Score ${r.right}/${r.total} (${pct(r.right, r.total)}%). Grade 4 level ${r.L[0]}/${r.L[1]}. Challenge ${r.H[0]}/${r.H[1]}. Time ${mins(st.secs)}.`, `Marked Not sure: ${r.starN} (${r.starRight} right).`, "By skill:"];
     Object.entries(r.skills).forEach(([n, v]) => lines.push(`- ${n}: ${v[0]}/${v[1]}`));
     lines.push("Answers (question: her answer, key, * = Not sure, ! = missed):");
     s.items.forEach((it, n) => { const m = st.ans[it.id]; lines.push(`${n + 1} ${it.id}${it.lvl === "H" ? "(C)" : ""}: ${m === undefined ? "-" : LETTERS[m]} / ${LETTERS[it.a]}${st.star[it.id] ? " *" : ""}${m === it.a ? "" : " !"}`); });
@@ -390,6 +390,12 @@ const READ = [
     }
     if (act === "home") { save(); view = "home"; copyText = null; confirmReset = null; home(); window.scrollTo(0, 0); return; }
     if (act === "tab") { tab = b.dataset.t; results(); return; }
+    if (act === "mail") {
+      const a = document.createElement("a");
+      a.href = "mailto:?subject=" + encodeURIComponent("Practice results") + "&body=" + encodeURIComponent(summaryText(cur));
+      document.body.appendChild(a); a.click(); a.remove();
+      return;
+    }
     if (act === "copy") {
       const t = summaryText(cur);
       const show = () => { copyText = t; results(); const box = document.getElementById("copybox"); if (box) { box.focus(); box.select(); } };
