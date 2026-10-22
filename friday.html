@@ -151,7 +151,7 @@
   try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) { /* storage may be blocked */ } };
   const done = () => (store.done ||= {});
-  let view = "home", run = null, lastSend = "", copyText = null;
+  let view = "home", run = null, lastSend = "", copyText = null, homeCopy = { s: -1, t: "" };
 
   const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
   const sess = () => DATA.sessions[run.s];
@@ -168,22 +168,30 @@
     }
     return lines.join("\n");
   }
-  async function push(s, title) {
-    try {
-      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 12000);
-      const r = await fetch(NTFY, { method: "POST", body: summary(s), headers: { "Title": title, "Tags": "pencil2" }, signal: ctl.signal });
-      clearTimeout(to);
-      if (!r.ok) throw new Error("status " + r.status);
-      done()[s].sentAt = Date.now(); lastSend = "ok"; save(); return true;
-    } catch (e) { lastSend = "fail"; return false; }
+  async function push(s, title, attempts) {
+    attempts = attempts || 2;
+    for (let n = 0; n < attempts; n++) {
+      try {
+        const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 12000);
+        const r = await fetch(NTFY, { method: "POST", body: summary(s), headers: { "Title": title, "Tags": "pencil2" }, signal: ctl.signal });
+        clearTimeout(to);
+        if (!r.ok) throw new Error("status " + r.status);
+        done()[s].sentAt = Date.now(); lastSend = "ok"; save(); return true;
+      } catch (e) {
+        if (n < attempts - 1) await new Promise(res => setTimeout(res, 2000));
+      }
+    }
+    lastSend = "fail"; return false;
   }
 
   function home() {
     const cards = DATA.sessions.map((S, i) => {
       const r = done()[i];
+      const unsent = r && !r.sentAt;
       return `<section class="card"><h2>${S.cold ? "Last: mixed review" : "Session " + (i + 1)}</h2><h3>${S.title}</h3>
-        <div class="meta"><span class="pill">${S.items.length} questions</span><span class="pill">about ${S.min} min</span>${r ? `<span class="pill star">Last time: ${r.score} of ${r.total}</span>` : ""}</div>
-        <div class="row"><button class="btn" data-act="start" data-s="${i}">${r ? "Practice again" : "Start"}</button></div></section>`;
+        <div class="meta"><span class="pill">${S.items.length} questions</span><span class="pill">about ${S.min} min</span>${r ? `<span class="pill star">Last time: ${r.score} of ${r.total}</span>` : ""}${r ? (r.sentAt ? `<span class="pill">Sent to Dad</span>` : `<span class="pill star">Not sent yet</span>`) : ""}</div>
+        <div class="row"><button class="btn" data-act="start" data-s="${i}">${r ? "Practice again" : "Start"}</button>${unsent ? `<button class="btn ghost" data-act="hsend" data-s="${i}">Send to Dad</button><button class="btn ghost" data-act="hcopy" data-s="${i}">Copy</button>` : ""}</div>
+        ${homeCopy.s === i && homeCopy.t ? `<textarea class="copybox" id="copybox" readonly>${homeCopy.t}</textarea>` : ""}</section>`;
     }).join("");
     $app.innerHTML = `<header class="home-head"><h1>Friday warm-up</h1>
       <p class="muted">Short practice for the MAP test. Each session starts with a rule card. After every answer you see right or wrong, and why. Do one or two sessions a day. Go slowly.</p></header>
@@ -257,6 +265,21 @@
     const act = b.dataset.act;
     if (act === "start") { const s = Number(b.dataset.s); run = { s, pass: 1, order: DATA.sessions[s].shuffle ? shuffled(DATA.sessions[s].items.length) : DATA.sessions[s].items.map((_, i) => i), pos: 0, ans: {}, t0: Date.now() }; view = "rule"; copyText = null; ruleCard(); return; }
     if (act === "home") { view = "home"; run = null; copyText = null; home(); return; }
+    if (act === "hsend") {
+      const s = Number(b.dataset.s);
+      b.disabled = true; b.textContent = "Sending...";
+      push(s, "Friday practice " + (s + 1) + " (sent later)").then(ok => {
+        homeCopy = ok ? { s: -1, t: "" } : { s, t: summary(s) + "\n\n(It still did not send. Copy this and text it to Dad.)" };
+        home();
+      });
+      return;
+    }
+    if (act === "hcopy") {
+      const s = Number(b.dataset.s); const t = summary(s);
+      const show = () => { homeCopy = { s, t }; home(); const box = document.getElementById("copybox"); if (box) { box.focus(); box.select(); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => { homeCopy = { s, t: t + "\n\n(Copied.)" }; home(); }, show); else show();
+      return;
+    }
     if (act === "begin") { view = "q"; run.t0 = Date.now(); question(); return; }
     if (act === "pick") { const idx = run.order[run.pos]; run.ans[idx] = Number(b.dataset.n); question(); return; }
     if (act === "next") { if (run.pos === run.order.length - 1) finishPass(); else { run.pos++; question(); } return; }
